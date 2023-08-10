@@ -1,16 +1,7 @@
-# new_app
+# UEE project
 
 A new Flutter project.
 
-## Getting Started
+## SustainSwap (Mobile Application)
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+The “SustainSwap” is a mobile application designed to address the growing concern of fast fashion's environmental impact. The platform allows users to exchange and swap their pre-loved clothing and accessories with others, promoting a circular economy and reducing the fashion industry's carbon footprint. This aims to make sustainable fashion accessible and fun for everyone while fostering a sense of community among eco-conscious individuals. The app offers convenience, a user-friendly experience, and the opportunity to track social and environmental impact.​

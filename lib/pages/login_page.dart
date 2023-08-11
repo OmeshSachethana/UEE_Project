@@ -79,12 +79,23 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(height: 20),
+              const SizedBox(height: 15),
 
+              //app name
+              const Text(
+                'SustainSwap',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 10),
               //logo
               const Icon(
                 Icons.lock,
                 size: 100,
+                color: Color.fromARGB(255, 97, 73, 139),
               ),
 
               const SizedBox(height: 20),

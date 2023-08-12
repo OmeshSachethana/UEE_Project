@@ -19,6 +19,7 @@ class _RegisterPageState extends State<RegisterPage> {
   //text editing controllers
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
 
   //sign user in method
   void signUserUp() async {
@@ -33,11 +34,16 @@ class _RegisterPageState extends State<RegisterPage> {
 
     //try creating the user
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text,
-        password: passwordController.text,
-      );
-
+      //verify the password confirmed
+      if (passwordController.text == confirmPasswordController.text) {
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: emailController.text,
+          password: passwordController.text,
+        );
+      } else {
+        //error message if password confirm is not match
+        showErrorMessage("Passwords don't match!");
+      }
       //pop the loading circle
       Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
@@ -95,22 +101,22 @@ class _RegisterPageState extends State<RegisterPage> {
                 //logo
                 const Icon(
                   Icons.lock,
-                  size: 100,
+                  size: 60,
                   color: Color.fromARGB(255, 97, 73, 139),
                 ),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
 
                 //welcome back
                 const Text(
-                  'Welcome back\'ve been missed!',
+                  'Create an acoount!',
                   style: TextStyle(
                     color: Colors.grey,
                     fontSize: 16,
                   ),
                 ),
 
-                const SizedBox(height: 25),
+                const SizedBox(height: 15),
 
                 //username textfield
                 MyTextField(
@@ -154,7 +160,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 const SizedBox(height: 25),
 
                 //sign in button
-                MyButton(onTap: signUserUp),
+                MyButton(text: "Sign Up", onTap: signUserUp),
 
                 const SizedBox(height: 30),
 

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:new_app/pages/login_page.dart';
 
 import 'home_page.dart';
+import 'login_or_register_page.dart';
 
 //check if the user sign in or not
 class AuthPage extends StatelessWidget {
@@ -20,7 +21,7 @@ class AuthPage extends StatelessWidget {
           }
           //user is not logged in
           else {
-            return LoginPage();
+            return LoginOrRegisterPage();
           }
         },
       ),

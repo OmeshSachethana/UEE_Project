@@ -40,13 +40,14 @@ class _LoginPageState extends State<LoginPage> {
       //pop the loading circle
       Navigator.pop(context);
       if (e.code == 'user-not-found') {
-        wrongEmailMessage();
+        wrongEmailMessage(); //function calling
       } else if (e.code == 'wrong-password') {
         wrongPasswordMessage();
       }
     }
   }
 
+  //Wrong email function implementation
   void wrongEmailMessage() {
     showDialog(
       context: context,
@@ -58,6 +59,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  //Wrong password function implementation
   void wrongPasswordMessage() {
     showDialog(
       context: context,

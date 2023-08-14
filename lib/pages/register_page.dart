@@ -41,6 +41,7 @@ class _RegisterPageState extends State<RegisterPage> {
           email: emailController.text,
           password: passwordController.text,
         );
+        if (context.mounted) Navigator.pop(context);
       } else {
         //pop the loading circle
         Navigator.pop(context);
@@ -50,12 +51,6 @@ class _RegisterPageState extends State<RegisterPage> {
     } on FirebaseAuthException catch (e) {
       //pop the loading circle
       Navigator.pop(context);
-      // if (e.code == 'user-not-found') {
-      //   wrongEmailMessage(); //function calling
-      // } else if (e.code == 'wrong-password') {
-      //   wrongPasswordMessage();
-      // }
-
       showErrorMessage(e.code);
     }
   }

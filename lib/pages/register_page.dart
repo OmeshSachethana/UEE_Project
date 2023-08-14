@@ -41,21 +41,16 @@ class _RegisterPageState extends State<RegisterPage> {
           email: emailController.text,
           password: passwordController.text,
         );
+        if (context.mounted) Navigator.pop(context);
       } else {
+        //pop the loading circle
+        Navigator.pop(context);
         //error message if password confirm is not match
         showErrorMessage("Passwords don't match!");
       }
-      //pop the loading circle
-      Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
       //pop the loading circle
       Navigator.pop(context);
-      // if (e.code == 'user-not-found') {
-      //   wrongEmailMessage(); //function calling
-      // } else if (e.code == 'wrong-password') {
-      //   wrongPasswordMessage();
-      // }
-
       showErrorMessage(e.code);
     }
   }

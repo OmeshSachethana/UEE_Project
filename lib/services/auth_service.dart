@@ -18,6 +18,7 @@ class AuthService {
     );
 
     //finally, lets sigm in
-    return await FirebaseAuth.instance.signInWithCredential(credential);
+    return await FirebaseAuth.instance
+        .signInWithCredential(credential); //adding details to firebase
   }
 }

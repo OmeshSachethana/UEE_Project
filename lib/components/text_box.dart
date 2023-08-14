@@ -29,14 +29,17 @@ class MyTextBox extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               //section name
-              Text(sectionName),
+              Text(
+                sectionName,
+                style: TextStyle(color: Colors.grey[500]),
+              ),
 
               //edit Button
               IconButton(
                   onPressed: () {},
                   icon: Icon(
                     Icons.settings,
-                    color: Colors.grey[50],
+                    color: Colors.grey[400],
                   )),
             ],
           ),

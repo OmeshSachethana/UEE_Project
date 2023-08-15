@@ -41,7 +41,7 @@ class _ProfilePageState extends State<ProfilePage> {
         actions: [
           //cancel button
           TextButton(
-            child: Text(
+            child: const Text(
               'Cancel',
               style: TextStyle(color: Colors.white),
             ),
@@ -50,7 +50,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
           //save button
           TextButton(
-            child: Text(
+            child: const Text(
               'Save',
               style: TextStyle(color: Colors.white),
             ),
@@ -105,11 +105,25 @@ class _ProfilePageState extends State<ProfilePage> {
                   onPressed: () => editField('username'),
                 ),
 
-                //bio
+                //phone number
                 MyTextBox(
-                  text: userData['bio'],
-                  sectionName: 'username',
-                  onPressed: () => editField('bio'),
+                  text: userData['contactNumber'],
+                  sectionName: 'contactNumber',
+                  onPressed: () => editField('contactNumber'),
+                ),
+
+                //address
+                MyTextBox(
+                  text: userData['address'],
+                  sectionName: 'address',
+                  onPressed: () => editField('address'),
+                ),
+
+                //city
+                MyTextBox(
+                  text: userData['city'],
+                  sectionName: 'city',
+                  onPressed: () => editField('city'),
                 ),
 
                 const SizedBox(height: 50),

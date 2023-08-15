@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:new_app/components/text_box.dart';
@@ -22,47 +23,68 @@ class _ProfilePageState extends State<ProfilePage> {
         title: const Text("Profile Page"),
         backgroundColor: Colors.grey[900],
       ),
-      body: ListView(
-        children: [
-          const SizedBox(height: 50),
-          const Icon(
-            Icons.person,
-            size: 72,
-          ),
-          const SizedBox(height: 50),
-          Padding(
-            padding: const EdgeInsets.only(left: 25.0),
-            child: Text(
-              'My Details',
-              style: TextStyle(color: Colors.grey[600]),
-            ),
-          ),
+      body: StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection("Users")
+            .doc(currentUser.email!)
+            .snapshots(),
+        builder: (context, snapshot) {
+          //get user data
+          if (snapshot.hasData) {
+            final userData = snapshot.data!.data() as Map<String, dynamic>;
 
-          //username
-          MyTextBox(
-            text: 'Omesh Sachethana',
-            sectionName: 'username',
-            onPressed: () => editField('username'),
-          ),
+            return ListView(
+              children: [
+                const SizedBox(height: 50),
+                const Icon(
+                  Icons.person,
+                  size: 72,
+                ),
+                const SizedBox(height: 50),
+                Padding(
+                  padding: const EdgeInsets.only(left: 25.0),
+                  child: Text(
+                    'My Details',
+                    style: TextStyle(color: Colors.grey[600]),
+                  ),
+                ),
 
-          //bio
-          MyTextBox(
-            text: 'empty bio',
-            sectionName: 'username',
-            onPressed: () => editField('bio'),
-          ),
+                //username
+                MyTextBox(
+                  text: userData['username'],
+                  sectionName: 'username',
+                  onPressed: () => editField('username'),
+                ),
 
-          const SizedBox(height: 50),
+                //bio
+                MyTextBox(
+                  text: userData['bio'],
+                  sectionName: 'username',
+                  onPressed: () => editField('bio'),
+                ),
 
-          //user posts
-          Padding(
-            padding: const EdgeInsets.only(left: 25.0),
-            child: Text(
-              'My Posts',
-              style: TextStyle(color: Colors.grey[600]),
-            ),
-          ),
-        ],
+                const SizedBox(height: 50),
+
+                //user posts
+                Padding(
+                  padding: const EdgeInsets.only(left: 25.0),
+                  child: Text(
+                    'My Posts',
+                    style: TextStyle(color: Colors.grey[600]),
+                  ),
+                ),
+              ],
+            );
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text('Error${snapshot.error}'),
+            );
+          }
+
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
       ),
     );
   }

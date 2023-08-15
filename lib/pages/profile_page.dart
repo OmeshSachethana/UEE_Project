@@ -41,7 +41,7 @@ class _ProfilePageState extends State<ProfilePage> {
         actions: [
           //cancel button
           TextButton(
-            child: Text(
+            child: const Text(
               'Cancel',
               style: TextStyle(color: Colors.white),
             ),
@@ -50,7 +50,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
           //save button
           TextButton(
-            child: Text(
+            child: const Text(
               'Save',
               style: TextStyle(color: Colors.white),
             ),

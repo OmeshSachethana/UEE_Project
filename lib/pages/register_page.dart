@@ -52,7 +52,9 @@ class _RegisterPageState extends State<RegisterPage> {
           .doc(userCredential.user!.email)
           .set({
         'username': emailController.text.split('@')[0],
-        'bio': 'Empty bio..'
+        'contactNumber': '0771234567',
+        'address': 'address',
+        'city': 'city',
       });
 
       if (context.mounted) Navigator.pop(context);

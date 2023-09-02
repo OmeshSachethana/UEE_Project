@@ -37,10 +37,12 @@ class _MessageWidgetState extends State<MessageWidget> {
         if (userEmail != null) {
           final DocumentSnapshot userDoc = await FirebaseFirestore.instance
               .collection('Users')
-              .doc(userEmail)
+              .doc(
+                  userEmail) // Use the authenticated user's email as the document ID
               .get();
 
-          if (userDoc.exists && userDoc.id == userEmail) {
+          // Validate the UID
+          if (userDoc.exists) {
             return userDoc['username'] as String?;
           }
         }
@@ -131,6 +133,14 @@ class _MessageWidgetState extends State<MessageWidget> {
                     return const Text('No Messages Yet');
                   }
                   final messages = snapshot.data!.docs;
+
+                  // Reverse the order of messages
+                  messages.sort((a, b) {
+                    final timestampA = a['timestamp'] as Timestamp;
+                    final timestampB = b['timestamp'] as Timestamp;
+                    return timestampA.compareTo(timestampB);
+                  });
+
                   List<Widget> messageWidgets = [];
                   for (var message in messages) {
                     final senderId = message['senderId'];

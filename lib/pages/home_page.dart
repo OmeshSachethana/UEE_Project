@@ -14,7 +14,7 @@ class HomePage extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ExchangePage(),
+        builder: (context) => const ExchangePage(),
       ),
     );
   }
@@ -58,13 +58,13 @@ class HomePage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text("Logged In as " + user.email!),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 // Navigate to the ExchangePage when the button is pressed
                 navigateToExchangePage(context);
               },
-              child: Text('View Product for Exchange'),
+              child: const Text('View Product for Exchange'),
             ),
           ],
         ),

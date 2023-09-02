@@ -3,11 +3,21 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:new_app/components/drawer.dart';
 import 'package:new_app/pages/profile_page.dart';
+import 'exchange_page.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
 
   final user = FirebaseAuth.instance.currentUser!;
+
+  void navigateToExchangePage(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ExchangePage(),
+      ),
+    );
+  }
 
   // Sign out user
   void signUserOut(BuildContext context) {
@@ -30,7 +40,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('The wall'),
+        title: const Text('The Wall'),
         backgroundColor: Colors.grey[900],
         actions: [
           IconButton(
@@ -43,7 +53,22 @@ class HomePage extends StatelessWidget {
         onProfileTap: () => goToProfilePage(context),
         onSignoutTap: () => signUserOut(context),
       ),
-      body: Center(child: Text("Logged In as " + user.email!)),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("Logged In as " + user.email!),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                // Navigate to the ExchangePage when the button is pressed
+                navigateToExchangePage(context);
+              },
+              child: Text('View Product for Exchange'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'message_widget.dart'; // Import the MessageWidget
+import 'test_message.dart'; // Import the MessageWidget
 
 class ExchangePage extends StatefulWidget {
   const ExchangePage({super.key});
@@ -12,6 +12,27 @@ class ExchangePage extends StatefulWidget {
 
 class _ExchangePageState extends State<ExchangePage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  // Function to navigate to MessageWidget
+  void _navigateToMessageWidget(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Message Seller'),
+          content: MessageWidget(recipientEmail: 'menusha@gmail.com'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +60,6 @@ class _ExchangePageState extends State<ExchangePage> {
             const SizedBox(height: 16.0),
 
             // Include the MessageWidget here
-            MessageWidget(firestore: _firestore),
 
             const SizedBox(height: 16.0),
             const Divider(),
@@ -48,7 +68,16 @@ class _ExchangePageState extends State<ExchangePage> {
             // Exchange Button
             ElevatedButton(
               onPressed: () {
-                // Implement exchange logic here
+                // Navigate to MessageWidget when the button is pressed
+                _navigateToMessageWidget(context);
+              },
+              child: const Text('Message Seller'),
+            ),
+
+            // Exchange Button
+            ElevatedButton(
+              onPressed: () {
+                // Navigate to MessageWidget when the button is pressed
               },
               child: const Text('Exchange Items'),
             ),

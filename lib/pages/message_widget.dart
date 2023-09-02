@@ -19,7 +19,7 @@ class Message {
 class MessageWidget extends StatefulWidget {
   final FirebaseFirestore firestore;
 
-  MessageWidget({required this.firestore});
+  const MessageWidget({Key? key, required this.firestore}) : super(key: key);
 
   @override
   _MessageWidgetState createState() => _MessageWidgetState();
@@ -35,13 +35,11 @@ class _MessageWidgetState extends State<MessageWidget> {
       if (user != null) {
         final userEmail = user.email;
         if (userEmail != null) {
-          // Use the user's email as the document ID
           final DocumentSnapshot userDoc = await FirebaseFirestore.instance
               .collection('Users')
               .doc(userEmail)
               .get();
 
-          // Validate the UID
           if (userDoc.exists && userDoc.id == userEmail) {
             return userDoc['username'] as String?;
           }
@@ -51,27 +49,31 @@ class _MessageWidgetState extends State<MessageWidget> {
       print('Error fetching username: $e');
     }
 
-    return null; // Return null if user not found or username doesn't exist or UID doesn't match
+    return null;
   }
 
   void sendMessage(String messageText) {
-    final String senderId = FirebaseAuth.instance.currentUser!.uid;
+    final User? user = FirebaseAuth.instance.currentUser;
 
-    final message = Message(
-      senderId: senderId,
-      receiverId: 'KUuLlMlDc8XxzJETH7MTkyGk0qn2',
-      text: messageText,
-      timestamp: DateTime.now(),
-    );
+    if (user != null) {
+      final String senderId = user.uid;
 
-    widget.firestore.collection('messages').add({
-      'senderId': message.senderId,
-      'receiverId': message.receiverId,
-      'text': message.text,
-      'timestamp': message.timestamp, // Store as DateTime
-    });
+      final message = Message(
+        senderId: senderId,
+        receiverId: 'pSrLbo7Q5Wdp0SDa0F0WUIBKQUu1',
+        text: messageText,
+        timestamp: DateTime.now(),
+      );
 
-    messageController.clear();
+      widget.firestore.collection('messages').add({
+        'senderId': message.senderId,
+        'receiverId': message.receiverId,
+        'text': message.text,
+        'timestamp': message.timestamp,
+      });
+
+      messageController.clear();
+    }
   }
 
   @override
@@ -114,55 +116,53 @@ class _MessageWidgetState extends State<MessageWidget> {
         ),
         // Display Message (if sent)
         const SizedBox(height: 16.0),
-        StreamBuilder<QuerySnapshot>(
-          // Replace with your own Firestore query for displaying messages
-          stream: widget.firestore.collection('messages').snapshots(),
-          builder: (context, snapshot) {
-            if (isLoading) {
-              return const Text('Loading messages...'); // Display a loading message
-            }
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Text(
-                  'No Messages Yet'); // Display a message when no data is available
-            }
-            if (!snapshot.hasData || snapshot.data == null) {
-              return const Text('No Messages Yet');
-            }
-            final messages =
-                snapshot.data!.docs; // Use the ! operator to assert non-null
-            List<Widget> messageWidgets = [];
-            for (var message in messages) {
-              final senderId = message['senderId'];
-              final text = message['text'];
-              messageWidgets.add(
-                FutureBuilder<String?>(
-                  future: getUsername(
-                      senderId), // Fetch the username asynchronously
-                  builder: (context, usernameSnapshot) {
-                    if (usernameSnapshot.connectionState ==
-                        ConnectionState.waiting) {
-                      return const Text(
-                          'Loading messages...'); // Display a loading message while fetching the username
-                    }
-                    if (usernameSnapshot.hasError ||
-                        usernameSnapshot.data == null) {
-                      return Text(
-                          '$senderId: $text'); // Use UID if username is not available
-                    }
-                    final username = usernameSnapshot.data!;
-                    return ListTile(
-                        title: Text(
-                            '$username: $text') // Display the username instead of UID
-                        );
-                  },
-                ),
-              );
-            }
-            return Column(
-              children: messageWidgets,
-            );
-          },
-        ),
+        // Inside the StreamBuilder builder method...
+        isLoading
+            ? CircularProgressIndicator() // Display a loading indicator for the entire message component
+            : StreamBuilder<QuerySnapshot>(
+                stream: widget.firestore.collection('messages').snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Text(
+                      'No Messages Yet',
+                    );
+                  }
+                  if (!snapshot.hasData || snapshot.data == null) {
+                    return const Text('No Messages Yet');
+                  }
+                  final messages = snapshot.data!.docs;
+                  List<Widget> messageWidgets = [];
+                  for (var message in messages) {
+                    final senderId = message['senderId'];
+                    final text = message['text'];
+                    messageWidgets.add(
+                      FutureBuilder<String?>(
+                        initialData: null, // Start with no initial data
+                        future: getUsername(senderId),
+                        builder: (context, usernameSnapshot) {
+                          if (usernameSnapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Container(); // Initially show nothing
+                          }
+                          if (usernameSnapshot.hasError) {
+                            return Text('$senderId: $text');
+                          }
+                          final username = usernameSnapshot.data ?? senderId;
+
+                          return ListTile(
+                            title: Text(
+                              '$username: $text',
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  }
+                  return Column(
+                    children: messageWidgets,
+                  );
+                },
+              ),
       ],
     );
   }

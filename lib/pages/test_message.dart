@@ -75,9 +75,30 @@ class _MessageWidgetState extends State<MessageWidget> {
                     final text = messages[index]['text'];
                     final isCurrentUser = sender == currentUserEmail;
 
-                    return ListTile(
-                      title: Text(isCurrentUser ? 'You' : sender),
-                      subtitle: Text(text),
+                    return Container(
+                      alignment: isCurrentUser
+                          ? Alignment.centerRight
+                          : Alignment.centerLeft,
+                      child: Container(
+                        padding: EdgeInsets.all(10.0),
+                        margin: EdgeInsets.all(10.0),
+                        decoration: BoxDecoration(
+                          color:
+                              isCurrentUser ? Colors.blue[100] : Colors.white,
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        width: MediaQuery.of(context).size.width *
+                            0.6, // Adjust as needed
+                        child: Column(
+                          crossAxisAlignment: isCurrentUser
+                              ? CrossAxisAlignment.end
+                              : CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(isCurrentUser ? 'You' : sender),
+                            Text(text),
+                          ],
+                        ),
+                      ),
                     );
                   },
                 );

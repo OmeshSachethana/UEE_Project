@@ -1,23 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:new_app/components/drawer.dart';
 import 'package:new_app/pages/profile_page.dart';
-import 'exchange_page.dart';
+import 'package:new_app/pages/sample_product_page.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
 
   final user = FirebaseAuth.instance.currentUser!;
-
-  void navigateToExchangePage(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const ExchangePage(),
-      ),
-    );
-  }
 
   // Sign out user
   void signUserOut(BuildContext context) {
@@ -53,22 +43,16 @@ class HomePage extends StatelessWidget {
         onProfileTap: () => goToProfilePage(context),
         onSignoutTap: () => signUserOut(context),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text("Logged In as " + user.email!),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // Navigate to the ExchangePage when the button is pressed
-                navigateToExchangePage(context);
-              },
-              child: const Text('View Product for Exchange'),
-            ),
-          ],
-        ),
-      ),
+      body: ProductPage(),
+      // body: Center(
+      //   child: Column(
+      //     mainAxisAlignment: MainAxisAlignment.center,
+      //     children: [
+      //       Text("Logged In as " + user.email!),
+      //       const SizedBox(height: 20),
+      //     ],
+      //   ),
+      // ),
     );
   }
 }

@@ -44,7 +44,6 @@ class _MessageWidgetState extends State<MessageWidget> {
               stream: FirebaseFirestore.instance
                   .collection('messages')
                   .orderBy('timestamp', descending: true)
-                  .where('recipient', whereIn: [currentUserEmail, widget.recipientEmail])
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -57,7 +56,14 @@ class _MessageWidgetState extends State<MessageWidget> {
                     child: Text('Error loading messages'),
                   );
                 }
-                final messages = snapshot.data?.docs ?? [];
+                final allMessages = snapshot.data?.docs ?? [];
+                final messages = allMessages
+                    .where((msg) =>
+                        (msg['sender'] == currentUserEmail &&
+                            msg['recipient'] == widget.recipientEmail) ||
+                        (msg['sender'] == widget.recipientEmail &&
+                            msg['recipient'] == currentUserEmail))
+                    .toList();
 
                 return ListView.builder(
                   reverse: true,

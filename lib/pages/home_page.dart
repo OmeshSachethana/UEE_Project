@@ -57,7 +57,7 @@ class HomePage extends StatelessWidget {
         onSignoutTap: () => signUserOut(context),
         onMessageTap: () => goToConversationsPage(context),
       ),
-      body: ProductPage(),
+      body: ProductPage(loggedInUserEmail: user.email!), // Pass it here
     );
   }
 }

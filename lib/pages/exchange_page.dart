@@ -1,32 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'test_message.dart'; // Import the MessageWidget
 
 class ExchangePage extends StatefulWidget {
-  const ExchangePage({super.key});
+  final String opEmail;
+
+  const ExchangePage({Key? key, required this.opEmail}) : super(key: key);
 
   @override
   _ExchangePageState createState() => _ExchangePageState();
 }
 
 class _ExchangePageState extends State<ExchangePage> {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
   // Function to navigate to MessageWidget
   void _navigateToMessageWidget(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Message Seller'),
-          content: MessageWidget(recipientEmail: 'menusha@gmail.com'),
+          title: const Text('Message Seller'),
+          content: MessageWidget(recipientEmail: widget.opEmail),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
               },
-              child: Text('Close'),
+              child: const Text('Close'),
             ),
           ],
         );
@@ -37,9 +35,6 @@ class _ExchangePageState extends State<ExchangePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Product Exchange'),
-      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(

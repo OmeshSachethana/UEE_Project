@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class MessageWidget extends StatefulWidget {
   final String recipientEmail;
 
-  MessageWidget({required this.recipientEmail});
+  const MessageWidget({super.key, required this.recipientEmail});
 
   @override
   _MessageWidgetState createState() => _MessageWidgetState();
@@ -35,6 +35,7 @@ class _MessageWidgetState extends State<MessageWidget> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.recipientEmail),
+        backgroundColor: Colors.grey[900],
       ),
       body: Column(
         children: <Widget>[

@@ -50,23 +50,47 @@ class _ConversationsPageState extends State<ConversationsPage> {
               child: Text('Error loading conversations'),
             );
           }
-          final messages = snapshot.data?.docs ?? [];
-          final recipients =
-              messages.map((msg) => msg['recipient']).toSet().toList();
+          final sentMessages = snapshot.data?.docs ?? [];
+          final sentRecipients =
+              sentMessages.map((msg) => msg['recipient']).toSet().toList();
 
-          return ListView.builder(
-            itemCount: recipients.length,
-            itemBuilder: (context, index) {
-              final recipient = recipients[index];
+          return StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('messages')
+                .where('recipient', isEqualTo: currentUserEmail)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              if (snapshot.hasError) {
+                return const Center(
+                  child: Text('Error loading conversations'),
+                );
+              }
+              final receivedMessages = snapshot.data?.docs ?? [];
+              final receivedSenders =
+                  receivedMessages.map((msg) => msg['sender']).toSet().toList();
 
-              return ListTile(
-                title: Text(recipient),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            MessageWidget(recipientEmail: recipient)),
+              final allConversations = {...sentRecipients, ...receivedSenders};
+
+              return ListView.builder(
+                itemCount: allConversations.length,
+                itemBuilder: (context, index) {
+                  final conversation = allConversations.elementAt(index);
+
+                  return ListTile(
+                    title: Text(conversation),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                MessageWidget(recipientEmail: conversation)),
+                      );
+                    },
                   );
                 },
               );

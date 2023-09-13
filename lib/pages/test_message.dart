@@ -32,6 +32,8 @@ class _MessageWidgetState extends State<MessageWidget> {
 
   @override
   Widget build(BuildContext context) {
+    fetchCurrentUserEmail();
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.recipientEmail),

@@ -3,14 +3,19 @@ import 'package:flutter/material.dart';
 import 'exchange_page.dart';
 
 class ProductPage extends StatelessWidget {
-  ProductPage({Key? key}) : super(key: key);
+  final String loggedInUserEmail;
+
+  ProductPage({Key? key, required this.loggedInUserEmail})
+      : super(key: key);
 
   void navigateToProductDetails(
       BuildContext context, DocumentSnapshot product) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ProductDetailsPage(product: product),
+        builder: (context) => ProductDetailsPage(
+            product: product,
+            loggedInUserEmail: loggedInUserEmail),
       ),
     );
   }
@@ -67,8 +72,11 @@ class ProductPage extends StatelessWidget {
 
 class ProductDetailsPage extends StatelessWidget {
   final DocumentSnapshot product;
+  final String loggedInUserEmail; // Add this
 
-  ProductDetailsPage({Key? key, required this.product}) : super(key: key);
+  ProductDetailsPage(
+      {Key? key, required this.product, required this.loggedInUserEmail})
+      : super(key: key); // And this
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +86,10 @@ class ProductDetailsPage extends StatelessWidget {
         title: data['name'] != null ? Text(data['name']) : const Text(''),
         backgroundColor: Colors.grey[900],
       ),
-      body: GestureDetector(child: ExchangePage(opEmail: data['op_email'])
+      body: GestureDetector(
+          child: ExchangePage(
+              opEmail: data['op_email'],
+              loggedInUserEmail: loggedInUserEmail) // Pass it here
           // child: Center(
           //   child: Text(
           //     'Details for ${data['Name']}',

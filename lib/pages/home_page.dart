@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:new_app/components/drawer.dart';
 import 'package:new_app/pages/profile_page.dart';
 import 'package:new_app/pages/sample_product_page.dart';
+import 'package:new_app/pages/all_conversations_page.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
@@ -26,6 +27,18 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  void goToConversationsPage(BuildContext context) {
+    // Pop the menu drawer
+    Navigator.pop(context);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ConversationsPage(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,17 +55,9 @@ class HomePage extends StatelessWidget {
       drawer: MyDrawer(
         onProfileTap: () => goToProfilePage(context),
         onSignoutTap: () => signUserOut(context),
+        onMessageTap: () => goToConversationsPage(context),
       ),
-      body: ProductPage(),
-      // body: Center(
-      //   child: Column(
-      //     mainAxisAlignment: MainAxisAlignment.center,
-      //     children: [
-      //       Text("Logged In as " + user.email!),
-      //       const SizedBox(height: 20),
-      //     ],
-      //   ),
-      // ),
+      body: ProductPage(loggedInUserEmail: user.email!), // Pass it here
     );
   }
 }

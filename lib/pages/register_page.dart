@@ -113,7 +113,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 //welcome back
                 const Text(
-                  'Create an acoount!',
+                  'Create an account!',
                   style: TextStyle(
                     color: Colors.grey,
                     fontSize: 16,
@@ -191,7 +191,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         onTap: () => AuthService().signInWithGoogle(),
                         imagePath: 'lib/images/google.png'),
 
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
 
                     //apple button
                     SquareTile(onTap: () {}, imagePath: 'lib/images/apple.png'),

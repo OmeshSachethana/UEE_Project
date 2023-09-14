@@ -29,6 +29,39 @@ class _ConversationsPageState extends State<ConversationsPage> {
     }
   }
 
+  Future<void> deleteConversation(String conversation) async {
+    // Get the collection reference
+    final messagesRef = FirebaseFirestore.instance.collection('messages');
+
+    // Create a query for messages sent by the current user to the conversation partner
+    final sentMessagesQuery = messagesRef
+        .where('sender', isEqualTo: currentUserEmail)
+        .where('recipient', isEqualTo: conversation);
+
+    // Create a query for messages received by the current user from the conversation partner
+    final receivedMessagesQuery = messagesRef
+        .where('sender', isEqualTo: conversation)
+        .where('recipient', isEqualTo: currentUserEmail);
+
+    // Get the documents for each query
+    final sentMessages = await sentMessagesQuery.get();
+    final receivedMessages = await receivedMessagesQuery.get();
+
+    // Start a batch for multiple operations
+    final batch = FirebaseFirestore.instance.batch();
+
+    // Mark each sent message as deleted by the sender
+    sentMessages.docs
+        .forEach((doc) => batch.update(doc.reference, {'senderDeleted': true}));
+
+    // Mark each received message as deleted by the receiver
+    receivedMessages.docs.forEach(
+        (doc) => batch.update(doc.reference, {'receiverDeleted': true}));
+
+    // Commit the batch
+    await batch.commit();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,6 +73,9 @@ class _ConversationsPageState extends State<ConversationsPage> {
         stream: FirebaseFirestore.instance
             .collection('messages')
             .where('sender', isEqualTo: currentUserEmail)
+            .where('senderDeleted',
+                isEqualTo:
+                    false) // Only fetch conversations that the sender has not deleted
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -60,6 +96,9 @@ class _ConversationsPageState extends State<ConversationsPage> {
             stream: FirebaseFirestore.instance
                 .collection('messages')
                 .where('recipient', isEqualTo: currentUserEmail)
+                .where('receiverDeleted',
+                    isEqualTo:
+                        false) // Only fetch conversations that the receiver has not deleted
                 .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -110,6 +149,34 @@ class _ConversationsPageState extends State<ConversationsPage> {
                               builder: (context) =>
                                   MessageWidget(recipientEmail: conversation)),
                         );
+                      },
+                      onLongPress: () async {
+                        final confirmDelete = await showDialog<bool>(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('Confirm Delete'),
+                              content: const Text(
+                                  'Are you sure you want to delete this conversation?'),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: const Text('Cancel'),
+                                  onPressed: () =>
+                                      Navigator.of(context).pop(false),
+                                ),
+                                TextButton(
+                                  child: const Text('Delete'),
+                                  onPressed: () =>
+                                      Navigator.of(context).pop(true),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+
+                        if (confirmDelete == true) {
+                          await deleteConversation(conversation);
+                        }
                       },
                     );
                   },

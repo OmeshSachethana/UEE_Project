@@ -99,7 +99,9 @@ class _MessageWidgetState extends State<MessageWidget> {
     if (messageText.isNotEmpty || imageUrl != null) {
       FirebaseFirestore.instance.collection('messages').add({
         'sender': currentUserEmail,
+        'senderDeleted' : false,
         'recipient': widget.recipientEmail,
+        'receiverDeleted' : false,
         'text': messageText,
         'imageUrl': imageUrl,
         'timestamp': FieldValue.serverTimestamp(),

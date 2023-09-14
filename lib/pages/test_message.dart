@@ -149,6 +149,17 @@ class _MessageWidgetState extends State<MessageWidget> {
                             msg['recipient'] == currentUserEmail))
                     .toList();
 
+                for (var message in messages) {
+                  if (message['sender'] == widget.recipientEmail &&
+                      message['recipient'] == currentUserEmail &&
+                      !message['isRead']) {
+                    FirebaseFirestore.instance
+                        .collection('messages')
+                        .doc(message.id)
+                        .update({'isRead': true});
+                  }
+                }
+
                 return ListView.builder(
                   reverse: true,
                   itemCount: messages.length,

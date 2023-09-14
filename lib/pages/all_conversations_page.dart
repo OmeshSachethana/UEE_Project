@@ -140,43 +140,71 @@ class _ConversationsPageState extends State<ConversationsPage> {
                   itemBuilder: (context, index) {
                     final conversation = allConversations.elementAt(index);
 
-                    return ListTile(
-                      title: Text(conversation),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  MessageWidget(recipientEmail: conversation)),
-                        );
-                      },
-                      onLongPress: () async {
-                        final confirmDelete = await showDialog<bool>(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: const Text('Confirm Delete'),
-                              content: const Text(
-                                  'Are you sure you want to delete this conversation?'),
-                              actions: <Widget>[
-                                TextButton(
-                                  child: const Text('Cancel'),
-                                  onPressed: () =>
-                                      Navigator.of(context).pop(false),
-                                ),
-                                TextButton(
-                                  child: const Text('Delete'),
-                                  onPressed: () =>
-                                      Navigator.of(context).pop(true),
-                                ),
-                              ],
+                    return StreamBuilder<QuerySnapshot>(
+                      stream: FirebaseFirestore.instance
+                          .collection('messages')
+                          .where('recipient', isEqualTo: currentUserEmail)
+                          .where('sender', isEqualTo: conversation)
+                          .where('isRead', isEqualTo: false)
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        final unreadMessages = snapshot.data?.docs.length ?? 0;
+
+                        return ListTile(
+                          title: Text(conversation),
+                          trailing: unreadMessages > 0
+                              ? CircleAvatar(
+                                  radius: 10.0,
+                                  backgroundColor: Colors.red,
+                                  child: Text(
+                                    '$unreadMessages',
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 12.0),
+                                  ),
+                                )
+                              : null,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    MessageWidget(recipientEmail: conversation),
+                              ),
                             );
+                            // Mark all messages in this conversation as read when the user opens the conversation
+                            snapshot.data?.docs.forEach((doc) {
+                              doc.reference.update({'isRead': true});
+                            });
+                          },
+                          onLongPress: () async {
+                            final confirmDelete = await showDialog<bool>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text('Confirm Delete'),
+                                  content: const Text(
+                                      'Are you sure you want to delete this conversation?'),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      child: const Text('Cancel'),
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(false),
+                                    ),
+                                    TextButton(
+                                      child: const Text('Delete'),
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(true),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+
+                            if (confirmDelete == true) {
+                              await deleteConversation(conversation);
+                            }
                           },
                         );
-
-                        if (confirmDelete == true) {
-                          await deleteConversation(conversation);
-                        }
                       },
                     );
                   },

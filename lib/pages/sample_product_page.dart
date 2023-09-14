@@ -5,7 +5,7 @@ import 'exchange_page.dart';
 class ProductPage extends StatelessWidget {
   final String loggedInUserEmail;
 
-  ProductPage({Key? key, required this.loggedInUserEmail})
+  const ProductPage({Key? key, required this.loggedInUserEmail})
       : super(key: key);
 
   void navigateToProductDetails(
@@ -74,7 +74,7 @@ class ProductDetailsPage extends StatelessWidget {
   final DocumentSnapshot product;
   final String loggedInUserEmail; // Add this
 
-  ProductDetailsPage(
+  const ProductDetailsPage(
       {Key? key, required this.product, required this.loggedInUserEmail})
       : super(key: key); // And this
 

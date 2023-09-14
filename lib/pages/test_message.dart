@@ -1,6 +1,9 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
 
 class MessageWidget extends StatefulWidget {
   final String recipientEmail;
@@ -14,6 +17,7 @@ class MessageWidget extends StatefulWidget {
 class _MessageWidgetState extends State<MessageWidget> {
   TextEditingController messageController = TextEditingController();
   late String currentUserEmail;
+  File? _imageFile;
 
   @override
   void initState() {
@@ -27,6 +31,81 @@ class _MessageWidgetState extends State<MessageWidget> {
       setState(() {
         currentUserEmail = user.email!;
       });
+    }
+  }
+
+  Future<String?> uploadImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+      });
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Confirm'),
+            content: Column(
+              children: <Widget>[
+                Image.file(_imageFile!),
+                TextField(
+                  controller: messageController,
+                  decoration:
+                      const InputDecoration(hintText: 'Type a message...'),
+                ),
+              ],
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  setState(() {
+                    _imageFile = null;
+                  });
+                },
+              ),
+              TextButton(
+                child: const Text('Upload'),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  try {
+                    // Upload to Firebase Storage
+                    await FirebaseStorage.instance
+                        .ref('uploads/file-to-upload.png')
+                        .putFile(_imageFile!);
+                    // Get the download URL
+                    final String downloadURL = await FirebaseStorage.instance
+                        .ref('uploads/file-to-upload.png')
+                        .getDownloadURL();
+                    sendMessage(imageUrl: downloadURL);
+                  } on FirebaseException catch (e) {
+                    print(e);
+                  }
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+    return null;
+  }
+
+  void sendMessage({String? imageUrl}) {
+    final messageText = messageController.text.trim();
+    if (messageText.isNotEmpty || imageUrl != null) {
+      FirebaseFirestore.instance.collection('messages').add({
+        'sender': currentUserEmail,
+        'recipient': widget.recipientEmail,
+        'text': messageText,
+        'imageUrl': imageUrl,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+
+      messageController.clear();
     }
   }
 
@@ -73,6 +152,7 @@ class _MessageWidgetState extends State<MessageWidget> {
                   itemBuilder: (context, index) {
                     final sender = messages[index]['sender'];
                     final text = messages[index]['text'];
+                    final imageUrl = messages[index]['imageUrl'];
                     final isCurrentUser = sender == currentUserEmail;
 
                     return Container(
@@ -80,8 +160,8 @@ class _MessageWidgetState extends State<MessageWidget> {
                           ? Alignment.centerRight
                           : Alignment.centerLeft,
                       child: Container(
-                        padding: EdgeInsets.all(10.0),
-                        margin: EdgeInsets.all(10.0),
+                        padding: const EdgeInsets.all(10.0),
+                        margin: const EdgeInsets.all(10.0),
                         decoration: BoxDecoration(
                           color:
                               isCurrentUser ? Colors.blue[100] : Colors.white,
@@ -95,7 +175,33 @@ class _MessageWidgetState extends State<MessageWidget> {
                               : CrossAxisAlignment.start,
                           children: <Widget>[
                             Text(isCurrentUser ? 'You' : sender),
-                            Text(text),
+                            imageUrl != null
+                                ? Column(
+                                    children: <Widget>[
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => Scaffold(
+                                                appBar: AppBar(
+                                                  backgroundColor:
+                                                      Colors.grey[900],
+                                                ),
+                                                body: Center(
+                                                  child:
+                                                      Image.network(imageUrl),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        child: Image.network(imageUrl),
+                                      ),
+                                      Text(text),
+                                    ],
+                                  )
+                                : Text(text),
                           ],
                         ),
                       ),
@@ -122,25 +228,17 @@ class _MessageWidgetState extends State<MessageWidget> {
                     sendMessage();
                   },
                 ),
+                IconButton(
+                  icon: const Icon(Icons.image),
+                  onPressed: () async {
+                    await uploadImage();
+                  },
+                ),
               ],
             ),
           ),
         ],
       ),
     );
-  }
-
-  void sendMessage() {
-    final messageText = messageController.text.trim();
-    if (messageText.isNotEmpty) {
-      FirebaseFirestore.instance.collection('messages').add({
-        'sender': currentUserEmail,
-        'recipient': widget.recipientEmail,
-        'text': messageText,
-        'timestamp': FieldValue.serverTimestamp(),
-      });
-
-      messageController.clear();
-    }
   }
 }

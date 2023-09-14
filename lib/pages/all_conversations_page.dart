@@ -5,6 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'test_message.dart';
 
 class ConversationsPage extends StatefulWidget {
+  const ConversationsPage({super.key});
+
   @override
   _ConversationsPageState createState() => _ConversationsPageState();
 }
@@ -31,7 +33,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Conversations'),
+        title: const Text('Messages'),
         backgroundColor: Colors.grey[900],
       ),
       body: StreamBuilder<QuerySnapshot>(
@@ -76,24 +78,43 @@ class _ConversationsPageState extends State<ConversationsPage> {
 
               final allConversations = {...sentRecipients, ...receivedSenders};
 
-              return ListView.builder(
-                itemCount: allConversations.length,
-                itemBuilder: (context, index) {
-                  final conversation = allConversations.elementAt(index);
+              if (allConversations.isEmpty) {
+                return const Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(
+                        Icons.chat_bubble_outline,
+                        size: 100.0,
+                        color: Colors.grey,
+                      ),
+                      Text(
+                        'Start a conversation with a seller',
+                        style: TextStyle(fontSize: 18.0),
+                      ),
+                    ],
+                  ),
+                );
+              } else {
+                return ListView.builder(
+                  itemCount: allConversations.length,
+                  itemBuilder: (context, index) {
+                    final conversation = allConversations.elementAt(index);
 
-                  return ListTile(
-                    title: Text(conversation),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                MessageWidget(recipientEmail: conversation)),
-                      );
-                    },
-                  );
-                },
-              );
+                    return ListTile(
+                      title: Text(conversation),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  MessageWidget(recipientEmail: conversation)),
+                        );
+                      },
+                    );
+                  },
+                );
+              }
             },
           );
         },

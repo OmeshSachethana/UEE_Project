@@ -99,9 +99,9 @@ class _MessageWidgetState extends State<MessageWidget> {
     if (messageText.isNotEmpty || imageUrl != null) {
       FirebaseFirestore.instance.collection('messages').add({
         'sender': currentUserEmail,
-        'senderDeleted' : false,
+        'senderDeleted': false,
         'recipient': widget.recipientEmail,
-        'receiverDeleted' : false,
+        'receiverDeleted': false,
         'text': messageText,
         'imageUrl': imageUrl,
         'timestamp': FieldValue.serverTimestamp(),
@@ -172,13 +172,13 @@ class _MessageWidgetState extends State<MessageWidget> {
                         width: MediaQuery.of(context).size.width *
                             0.6, // Adjust as needed
                         child: Column(
-                          crossAxisAlignment: isCurrentUser
-                              ? CrossAxisAlignment.end
-                              : CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Text(isCurrentUser ? 'You' : sender),
                             imageUrl != null
                                 ? Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: <Widget>[
                                       GestureDetector(
                                         onTap: () {
@@ -200,7 +200,11 @@ class _MessageWidgetState extends State<MessageWidget> {
                                         },
                                         child: Image.network(imageUrl),
                                       ),
-                                      Text(text),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 8.0), // Adjust as needed
+                                        child: Text(text),
+                                      ),
                                     ],
                                   )
                                 : Text(text),

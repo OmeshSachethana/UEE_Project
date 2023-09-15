@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'exchange_page.dart';
+import 'product_details_page.dart';
 
 class ProductPage extends StatelessWidget {
   final String loggedInUserEmail;

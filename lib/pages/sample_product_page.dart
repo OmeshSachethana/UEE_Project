@@ -14,8 +14,7 @@ class ProductPage extends StatelessWidget {
       context,
       MaterialPageRoute(
         builder: (context) => ProductDetailsPage(
-            product: product,
-            loggedInUserEmail: loggedInUserEmail),
+            product: product, loggedInUserEmail: loggedInUserEmail),
       ),
     );
   }
@@ -46,7 +45,7 @@ class ProductPage extends StatelessWidget {
                     child: Column(
                       children: <Widget>[
                         if (data['image'] != null)
-                          Image.network(data['image'], width: 100, height: 100),
+                          Image.network(data['image'], width: 170, height: 100),
                         if (data['name'] != null)
                           Text(
                             data['name'],

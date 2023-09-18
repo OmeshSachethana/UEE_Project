@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:new_app/components/drawer.dart';
+import 'package:new_app/pages/my_products_page.dart';
 import 'package:new_app/pages/profile_page.dart';
 import 'package:new_app/pages/sample_product_page.dart';
 import 'package:new_app/pages/all_conversations_page.dart';
@@ -24,6 +25,18 @@ class HomePage extends StatelessWidget {
       context,
       MaterialPageRoute(
         builder: (context) => const ProfilePage(),
+      ),
+    );
+  }
+
+  void goToProductsPage(BuildContext context) {
+    // Pop the menu drawer
+    Navigator.pop(context);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MyProductsPage(),
       ),
     );
   }
@@ -105,6 +118,7 @@ class HomePage extends StatelessWidget {
         onProfileTap: () => goToProfilePage(context),
         onSignoutTap: () => signUserOut(context),
         onMessageTap: () => goToConversationsPage(context),
+        onProductTap: () => goToProductsPage(context),
       ),
       body: ProductPage(loggedInUserEmail: user.email!), // Pass it here
     );

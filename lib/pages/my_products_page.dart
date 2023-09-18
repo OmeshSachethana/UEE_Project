@@ -21,40 +21,42 @@ class MyProductsPage extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Edit Product'),
+          title: const Text('Edit Product'),
           content: SingleChildScrollView(
             child: Column(
               children: <Widget>[
                 TextField(
                   controller: titleController,
-                  decoration: InputDecoration(labelText: 'Name'),
+                  decoration: const InputDecoration(labelText: 'Name'),
                 ),
                 TextField(
                   controller: quantityController,
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(labelText: 'Quantity'),
+                  decoration: const InputDecoration(labelText: 'Quantity'),
                 ),
                 TextField(
                   controller: priceController,
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(labelText: 'Price'),
+                  decoration: const InputDecoration(labelText: 'Price'),
                 ),
                 TextField(
                   controller: descriptionController,
-                  decoration: InputDecoration(labelText: 'Description'),
+                  decoration: const InputDecoration(labelText: 'Description'),
                 ),
               ],
             ),
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Cancel'),
+              style: TextButton.styleFrom(primary: Colors.red),
+              child: const Text('Cancel'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text('Save'),
+              style: TextButton.styleFrom(primary: Colors.green),
+              child: const Text('Save'),
               onPressed: () async {
                 try {
                   await FirebaseFirestore.instance
@@ -83,17 +85,19 @@ class MyProductsPage extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Delete Product'),
-          content: Text('Are you sure you want to delete this product?'),
+          title: const Text('Delete Product'),
+          content: const Text('Are you sure you want to delete this product?'),
           actions: <Widget>[
             TextButton(
-              child: Text('Cancel'),
+              style: TextButton.styleFrom(primary: Colors.red),
+              child: const Text('Cancel'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text('Delete'),
+              style: TextButton.styleFrom(primary: Colors.green),
+              child: const Text('Delete'),
               onPressed: () async {
                 try {
                   await FirebaseFirestore.instance
@@ -116,18 +120,8 @@ class MyProductsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('My Products'),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => AddProductPage()),
-              );
-            },
-          ),
-        ],
+        title: const Text('My Products'),
+        backgroundColor: Colors.blue,
       ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
@@ -142,7 +136,7 @@ class MyProductsPage extends StatelessWidget {
           }
 
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           }
@@ -161,56 +155,69 @@ class MyProductsPage extends StatelessWidget {
           });
 
           return ListView.builder(
+            padding: EdgeInsets.all(8.0),
             itemCount: productsByCategory.length,
             itemBuilder: (BuildContext context, int index) {
               String category = productsByCategory.keys.elementAt(index);
 
-              return Column(
-                children: <Widget>[
-                  ListTile(
-                    title: Text(
-                      category,
-                      style: TextStyle(fontWeight: FontWeight.bold),
+              return Card(
+                elevation: 5,
+                margin: EdgeInsets.symmetric(vertical: 10.0),
+                child: Column(
+                  children: <Widget>[
+                    ListTile(
+                      title: Text(
+                        category,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
-                  ),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: ClampingScrollPhysics(),
-                    itemCount: productsByCategory[category]!.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      DocumentSnapshot document =
-                          productsByCategory[category]![index];
-                      Map<String, dynamic> data =
-                          document.data() as Map<String, dynamic>;
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: ClampingScrollPhysics(),
+                      itemCount: productsByCategory[category]!.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        DocumentSnapshot document =
+                            productsByCategory[category]![index];
+                        Map<String, dynamic> data =
+                            document.data() as Map<String, dynamic>;
 
-                      return ListTile(
-                        title: Text(data['name']),
-                        leading:
-                            Image.network(data['image']), // Display image here
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: Icon(Icons.edit),
-                              onPressed: () =>
-                                  _showEditDialog(context, document),
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.delete),
-                              onPressed: () =>
-                                  _showDeleteDialog(context, document),
-                            ),
-                          ],
-                        ),
-                        // Add other product details as needed
-                      );
-                    },
-                  ),
-                ],
+                        return ListTile(
+                          title: Text(data['name']),
+                          leading: Image.network(data['image']),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: Icon(Icons.edit),
+                                onPressed: () =>
+                                    _showEditDialog(context, document),
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.delete),
+                                onPressed: () =>
+                                    _showDeleteDialog(context, document),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               );
             },
           );
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AddProductPage()),
+          );
+        },
+        backgroundColor: Colors.blue,
+        child: Icon(Icons.add),
       ),
     );
   }

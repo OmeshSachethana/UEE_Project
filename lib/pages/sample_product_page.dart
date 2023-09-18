@@ -88,7 +88,8 @@ class ProductDetailsPage extends StatelessWidget {
       body: GestureDetector(
           child: ExchangePage(
               opEmail: data['op_email'],
-              loggedInUserEmail: loggedInUserEmail) // Pass it here
+              loggedInUserEmail: loggedInUserEmail,
+              productId: product.id) // Pass it here
           // child: Center(
           //   child: Text(
           //     'Details for ${data['Name']}',

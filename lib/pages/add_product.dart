@@ -17,7 +17,6 @@ class _AddProductPageState extends State<AddProductPage> {
   final TextEditingController descriptionController = TextEditingController();
 
   final User user = FirebaseAuth.instance.currentUser!;
-
   final List<String> categories = ['Watches', 'Blouse', 'Shorts', 'Trousers'];
   String selectedCategory = 'Watches';
 
@@ -57,42 +56,15 @@ class _AddProductPageState extends State<AddProductPage> {
 
       if (pickedFile != null) {
         final File file = File(pickedFile.path);
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Confirm'),
-              content: Column(
-                children: <Widget>[
-                  Image.file(file),
-                ],
-              ),
-              actions: <Widget>[
-                TextButton(
-                  child: const Text('Cancel'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-                TextButton(
-                  child: const Text('Upload'),
-                  onPressed: () async {
-                    Navigator.of(context).pop();
-                    var snapshot = await FirebaseStorage.instance
-                        .ref()
-                        .child('image')
-                        .putFile(file);
-                    var downloadUrl = await snapshot.ref.getDownloadURL();
+        var snapshot = await FirebaseStorage.instance
+            .ref()
+            .child('images/${user.uid}/${DateTime.now().toString()}.jpg')
+            .putFile(file);
+        var downloadUrl = await snapshot.ref.getDownloadURL();
 
-                    setState(() {
-                      _imageUrl = downloadUrl;
-                    });
-                  },
-                ),
-              ],
-            );
-          },
-        );
+        setState(() {
+          _imageUrl = downloadUrl;
+        });
       }
     } catch (e) {
       print('Failed to upload image: $e');
@@ -119,7 +91,9 @@ class _AddProductPageState extends State<AddProductPage> {
                   );
                 }).toList(),
                 onChanged: (category) {
-                  selectedCategory = category.toString();
+                  setState(() {
+                    selectedCategory = category.toString();
+                  });
                 },
                 decoration: const InputDecoration(
                   labelText: 'Category',
@@ -150,9 +124,7 @@ class _AddProductPageState extends State<AddProductPage> {
               if (_imageUrl != null) Image.network(_imageUrl!),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: (_imageUrl != null)
-                    ? _addProduct
-                    : null, // Disable the button if no image is uploaded
+                onPressed: (_imageUrl != null) ? _addProduct : null,
                 child: const Text('Add Product'),
               ),
             ],

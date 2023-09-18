@@ -6,6 +6,112 @@ import 'add_product.dart'; // Import the AddProductPage
 class MyProductsPage extends StatelessWidget {
   final User user = FirebaseAuth.instance.currentUser!;
 
+  void _showEditDialog(BuildContext context, DocumentSnapshot document) {
+    Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+    TextEditingController titleController =
+        TextEditingController(text: data['name']);
+    TextEditingController quantityController =
+        TextEditingController(text: data['quantity'].toString());
+    TextEditingController priceController =
+        TextEditingController(text: data['price'].toString());
+    TextEditingController descriptionController =
+        TextEditingController(text: data['description']);
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Edit Product'),
+          content: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                TextField(
+                  controller: titleController,
+                  decoration: InputDecoration(labelText: 'Name'),
+                ),
+                TextField(
+                  controller: quantityController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(labelText: 'Quantity'),
+                ),
+                TextField(
+                  controller: priceController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(labelText: 'Price'),
+                ),
+                TextField(
+                  controller: descriptionController,
+                  decoration: InputDecoration(labelText: 'Description'),
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Save'),
+              onPressed: () async {
+                try {
+                  await FirebaseFirestore.instance
+                      .collection('products')
+                      .doc(document.id)
+                      .update({
+                    'name': titleController.text,
+                    'quantity': int.parse(quantityController.text),
+                    'price': double.parse(priceController.text),
+                    'description': descriptionController.text,
+                  });
+                  Navigator.of(context).pop();
+                } catch (e) {
+                  print('Failed to update product: $e');
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showDeleteDialog(BuildContext context, DocumentSnapshot document) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Delete Product'),
+          content: Text('Are you sure you want to delete this product?'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Delete'),
+              onPressed: () async {
+                try {
+                  await FirebaseFirestore.instance
+                      .collection('products')
+                      .doc(document.id)
+                      .delete();
+                  Navigator.of(context).pop();
+                } catch (e) {
+                  print('Failed to delete product: $e');
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,17 +147,68 @@ class MyProductsPage extends StatelessWidget {
             );
           }
 
-          return ListView(
-            children: snapshot.data!.docs.map((DocumentSnapshot document) {
-              Map<String, dynamic> data =
-                  document.data() as Map<String, dynamic>;
-              return ListTile(
-                title: Text(data['name']),
-                subtitle: Text('Category: ${data['category']}'),
-                leading: Image.network(data['image']), // Display image here
-                // Add other product details as needed
+          Map<String, List<DocumentSnapshot>> productsByCategory = {};
+
+          snapshot.data!.docs.forEach((document) {
+            Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+            String category = data['category'];
+
+            if (!productsByCategory.containsKey(category)) {
+              productsByCategory[category] = [];
+            }
+
+            productsByCategory[category]!.add(document);
+          });
+
+          return ListView.builder(
+            itemCount: productsByCategory.length,
+            itemBuilder: (BuildContext context, int index) {
+              String category = productsByCategory.keys.elementAt(index);
+
+              return Column(
+                children: <Widget>[
+                  ListTile(
+                    title: Text(
+                      category,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: ClampingScrollPhysics(),
+                    itemCount: productsByCategory[category]!.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      DocumentSnapshot document =
+                          productsByCategory[category]![index];
+                      Map<String, dynamic> data =
+                          document.data() as Map<String, dynamic>;
+
+                      return ListTile(
+                        title: Text(data['name']),
+                        leading:
+                            Image.network(data['image']), // Display image here
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.edit),
+                              onPressed: () =>
+                                  _showEditDialog(context, document),
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: () =>
+                                  _showDeleteDialog(context, document),
+                            ),
+                          ],
+                        ),
+                        // Add other product details as needed
+                      );
+                    },
+                  ),
+                ],
               );
-            }).toList(),
+            },
           );
         },
       ),

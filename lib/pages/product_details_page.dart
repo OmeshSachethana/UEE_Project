@@ -6,9 +6,10 @@ import 'pending_exchanges_widget.dart';
 class ExchangePage extends StatefulWidget {
   final String opEmail;
   final String loggedInUserEmail;
+  final String productId;
 
   const ExchangePage(
-      {Key? key, required this.opEmail, required this.loggedInUserEmail})
+      {Key? key, required this.opEmail, required this.loggedInUserEmail, required this.productId})
       : super(key: key);
 
   @override
@@ -45,6 +46,7 @@ class _ExchangePageState extends State<ExchangePage> {
           content: EscrowWidget(
             recipientEmail: widget.opEmail,
             loggedInUserEmail: widget.loggedInUserEmail,
+            productId: widget.productId,
           ),
           actions: [
             TextButton(
@@ -95,11 +97,6 @@ class _ExchangePageState extends State<ExchangePage> {
               ),
             SizedBox(height: 16.0),
             Divider(),
-            SizedBox(height: 16.0),
-            Text(
-              'Pending Exchanges:',
-              style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
-            ),
             Container(
               // Wrap the Column in a Container and provide a height
               height: MediaQuery.of(context).size.height * 0.5, // for example
@@ -107,7 +104,8 @@ class _ExchangePageState extends State<ExchangePage> {
                 child: Column(
                   children: [
                     PendingExchangesWidget(
-                        loggedInUserEmail: widget.loggedInUserEmail),
+                        loggedInUserEmail: widget.loggedInUserEmail,
+                        productId: widget.productId),
                   ],
                 ),
               ),

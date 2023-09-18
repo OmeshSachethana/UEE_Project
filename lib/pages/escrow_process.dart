@@ -4,9 +4,13 @@ import 'package:flutter/material.dart';
 class EscrowWidget extends StatefulWidget {
   final String recipientEmail;
   final String loggedInUserEmail;
+  final String productId; // Add this
 
   const EscrowWidget(
-      {Key? key, required this.recipientEmail, required this.loggedInUserEmail})
+      {Key? key,
+      required this.recipientEmail,
+      required this.loggedInUserEmail,
+      required this.productId}) // And this
       : super(key: key);
 
   @override
@@ -49,11 +53,17 @@ class _EscrowWidgetState extends State<EscrowWidget> {
             // Get the selected item from the dropdown
             String selectedItem = dropdownValue;
 
+            // Get a reference to the product document in Firestore
+            DocumentReference productRef = FirebaseFirestore.instance
+                .collection('products')
+                .doc(widget.productId);
+
             // Create a data object to send to Firestore
             var data = {
               'senderEmail': widget.loggedInUserEmail,
               'recipientEmail': widget.recipientEmail,
               'item': selectedItem,
+              'productRef': productRef, // Add the product reference here
               'status': 'pending',
             };
 

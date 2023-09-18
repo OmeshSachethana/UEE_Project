@@ -28,6 +28,18 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  void goToProductsPage(BuildContext context) {
+    // // Pop the menu drawer
+    // Navigator.pop(context);
+
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (context) => const ProfilePage(),
+    //   ),
+    // );
+  }
+
   void goToConversationsPage(BuildContext context) {
     // Pop the menu drawer
     Navigator.pop(context);
@@ -105,6 +117,7 @@ class HomePage extends StatelessWidget {
         onProfileTap: () => goToProfilePage(context),
         onSignoutTap: () => signUserOut(context),
         onMessageTap: () => goToConversationsPage(context),
+        onProductTap: () => goToProductsPage(context),
       ),
       body: ProductPage(loggedInUserEmail: user.email!), // Pass it here
     );

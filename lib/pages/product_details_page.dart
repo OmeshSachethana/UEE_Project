@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'test_message.dart'; // Import the MessageWidget
+import 'test_message.dart';
+import 'escrow_process.dart';
+import 'pending_exchanges_widget.dart';
 
 class ExchangePage extends StatefulWidget {
   final String opEmail;
@@ -22,6 +24,29 @@ class _ExchangePageState extends State<ExchangePage> {
         return AlertDialog(
           title: const Text('Message Seller'),
           content: MessageWidget(recipientEmail: widget.opEmail),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _navigateToExchangeWidget(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Exchange Items'),
+          content: EscrowWidget(
+            recipientEmail: widget.opEmail,
+            loggedInUserEmail: widget.loggedInUserEmail, // Add this line
+          ),
           actions: [
             TextButton(
               onPressed: () {
@@ -74,13 +99,22 @@ class _ExchangePageState extends State<ExchangePage> {
               ),
 
             // Exchange Button
-            if (widget.opEmail != widget.loggedInUserEmail) // And this
+            if (widget.opEmail != widget.loggedInUserEmail)
               ElevatedButton(
                 onPressed: () {
-                  // Navigate to MessageWidget when the button is pressed
+                  // Navigate to ExchangeWidget when the button is pressed
+                  _navigateToExchangeWidget(context);
                 },
                 child: const Text('Exchange Items'),
               ),
+            SizedBox(height: 16.0),
+            Divider(),
+            SizedBox(height: 16.0),
+            Text(
+              'Pending Exchanges:',
+              style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+            ),
+            PendingExchangesWidget(loggedInUserEmail: widget.loggedInUserEmail),
           ],
         ),
       ),

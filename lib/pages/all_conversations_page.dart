@@ -76,7 +76,6 @@ class _ConversationsPageState extends State<ConversationsPage> {
             .where('senderDeleted',
                 isEqualTo:
                     false) // Only fetch conversations that the sender has not deleted
-            .orderBy('timestamp', descending: true)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -100,7 +99,6 @@ class _ConversationsPageState extends State<ConversationsPage> {
                 .where('receiverDeleted',
                     isEqualTo:
                         false) // Only fetch conversations that the receiver has not deleted
-                .orderBy('timestamp', descending: true)
                 .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {

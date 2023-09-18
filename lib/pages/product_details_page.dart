@@ -5,18 +5,17 @@ import 'pending_exchanges_widget.dart';
 
 class ExchangePage extends StatefulWidget {
   final String opEmail;
-  final String loggedInUserEmail; // Add this
+  final String loggedInUserEmail;
 
   const ExchangePage(
       {Key? key, required this.opEmail, required this.loggedInUserEmail})
-      : super(key: key); // And this
+      : super(key: key);
 
   @override
   _ExchangePageState createState() => _ExchangePageState();
 }
 
 class _ExchangePageState extends State<ExchangePage> {
-  // Function to navigate to MessageWidget
   void _navigateToMessageWidget(BuildContext context) {
     showDialog(
       context: context,
@@ -27,7 +26,7 @@ class _ExchangePageState extends State<ExchangePage> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop();
               },
               child: const Text('Close'),
             ),
@@ -45,12 +44,12 @@ class _ExchangePageState extends State<ExchangePage> {
           title: const Text('Exchange Items'),
           content: EscrowWidget(
             recipientEmail: widget.opEmail,
-            loggedInUserEmail: widget.loggedInUserEmail, // Add this line
+            loggedInUserEmail: widget.loggedInUserEmail,
           ),
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop();
               },
               child: const Text('Close'),
             ),
@@ -68,7 +67,6 @@ class _ExchangePageState extends State<ExchangePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Product Details
             const Text(
               'Sample Dress',
               style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
@@ -81,28 +79,16 @@ class _ExchangePageState extends State<ExchangePage> {
             const SizedBox(height: 16.0),
             const Divider(),
             const SizedBox(height: 16.0),
-
-            // Include the MessageWidget here
-
-            const SizedBox(height: 16.0),
-            const Divider(),
-            const SizedBox(height: 16.0),
-
-            // Exchange Button
-            if (widget.opEmail != widget.loggedInUserEmail) // Add this
+            if (widget.opEmail != widget.loggedInUserEmail)
               ElevatedButton(
                 onPressed: () {
-                  // Navigate to MessageWidget when the button is pressed
                   _navigateToMessageWidget(context);
                 },
                 child: const Text('Message Seller'),
               ),
-
-            // Exchange Button
             if (widget.opEmail != widget.loggedInUserEmail)
               ElevatedButton(
                 onPressed: () {
-                  // Navigate to ExchangeWidget when the button is pressed
                   _navigateToExchangeWidget(context);
                 },
                 child: const Text('Exchange Items'),
@@ -114,7 +100,18 @@ class _ExchangePageState extends State<ExchangePage> {
               'Pending Exchanges:',
               style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
             ),
-            PendingExchangesWidget(loggedInUserEmail: widget.loggedInUserEmail),
+            Container(
+              // Wrap the Column in a Container and provide a height
+              height: MediaQuery.of(context).size.height * 0.5, // for example
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    PendingExchangesWidget(
+                        loggedInUserEmail: widget.loggedInUserEmail),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),

@@ -17,7 +17,13 @@ class _AddProductPageState extends State<AddProductPage> {
   final TextEditingController descriptionController = TextEditingController();
 
   final User user = FirebaseAuth.instance.currentUser!;
-  final List<String> categories = ['Watches', 'Blouse', 'Shorts', 'Trousers'];
+  final List<String> categories = [
+    'Watches',
+    'Blouse',
+    'Shorts',
+    'Trousers',
+    'Tshirts'
+  ];
   String selectedCategory = 'Watches';
 
   String? _imageUrl;

@@ -6,6 +6,7 @@ import 'package:new_app/pages/my_products_page.dart';
 import 'package:new_app/pages/profile_page.dart';
 import 'package:new_app/pages/sample_product_page.dart';
 import 'package:new_app/pages/all_conversations_page.dart';
+import 'package:new_app/pages/exchanges_screen.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
@@ -37,6 +38,18 @@ class HomePage extends StatelessWidget {
       context,
       MaterialPageRoute(
         builder: (context) => MyProductsPage(),
+      ),
+    );
+  }
+
+  void goToExchangesPage(BuildContext context) {
+    // Pop the menu drawer
+    Navigator.pop(context);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ExchangesScreen(),
       ),
     );
   }
@@ -119,6 +132,7 @@ class HomePage extends StatelessWidget {
         onSignoutTap: () => signUserOut(context),
         onMessageTap: () => goToConversationsPage(context),
         onProductTap: () => goToProductsPage(context),
+        onExchangeTap: () => goToExchangesPage(context),
       ),
       body: ProductPage(loggedInUserEmail: user.email!), // Pass it here
     );

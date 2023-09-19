@@ -64,7 +64,7 @@ class _EscrowWidgetState extends State<EscrowWidget> {
               'recipientEmail': widget.recipientEmail,
               'item': selectedItem,
               'productRef': productRef, // Add the product reference here
-              'status': 'pending',
+              'status': 'Pending',
             };
 
             // Add a new document to the 'exchanges' collection in Firestore

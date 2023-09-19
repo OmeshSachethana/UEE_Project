@@ -46,16 +46,17 @@ class ProductPage extends StatelessWidget {
                       children: <Widget>[
                         if (data['image'] != null)
                           Image.network(data['image'], width: 170, height: 100),
+                        const SizedBox(height: 15),
                         if (data['name'] != null)
                           Text(
                             data['name'],
-                            style: Theme.of(context).textTheme.headlineSmall,
+                            style: const TextStyle(fontSize: 15),
                           ),
-                        if (data['price'] != null)
-                          Text(
-                            'Price: ${data['price']}',
-                            style: Theme.of(context).textTheme.subtitle1,
-                          ),
+                        if (data['price'] != null) const SizedBox(height: 15),
+                        Text(
+                          'Price: ${data['price']}',
+                          style: const TextStyle(fontSize: 12),
+                        ),
                       ],
                     ),
                   ),

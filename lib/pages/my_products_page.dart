@@ -121,7 +121,7 @@ class MyProductsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Products'),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.grey[900],
       ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
@@ -155,25 +155,25 @@ class MyProductsPage extends StatelessWidget {
           });
 
           return ListView.builder(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             itemCount: productsByCategory.length,
             itemBuilder: (BuildContext context, int index) {
               String category = productsByCategory.keys.elementAt(index);
 
               return Card(
                 elevation: 5,
-                margin: EdgeInsets.symmetric(vertical: 10.0),
+                margin: const EdgeInsets.symmetric(vertical: 10.0),
                 child: Column(
                   children: <Widget>[
                     ListTile(
                       title: Text(
                         category,
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
                     ListView.builder(
                       shrinkWrap: true,
-                      physics: ClampingScrollPhysics(),
+                      physics: const ClampingScrollPhysics(),
                       itemCount: productsByCategory[category]!.length,
                       itemBuilder: (BuildContext context, int index) {
                         DocumentSnapshot document =
@@ -188,12 +188,12 @@ class MyProductsPage extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               IconButton(
-                                icon: Icon(Icons.edit),
+                                icon: const Icon(Icons.edit),
                                 onPressed: () =>
                                     _showEditDialog(context, document),
                               ),
                               IconButton(
-                                icon: Icon(Icons.delete),
+                                icon: const Icon(Icons.delete),
                                 onPressed: () =>
                                     _showDeleteDialog(context, document),
                               ),
@@ -216,8 +216,8 @@ class MyProductsPage extends StatelessWidget {
             MaterialPageRoute(builder: (context) => AddProductPage()),
           );
         },
-        backgroundColor: Colors.blue,
-        child: Icon(Icons.add),
+        backgroundColor: Colors.grey[900],
+        child: const Icon(Icons.add),
       ),
     );
   }

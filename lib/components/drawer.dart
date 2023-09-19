@@ -65,7 +65,7 @@ class MyDrawer extends StatelessWidget {
 
         //PRODUCTS
         MyListTile(
-            icon: Icons.article,
+            icon: Icons.production_quantity_limits,
             text: "M Y  P R O D U C T S",
             onTap: onProductTap),
 

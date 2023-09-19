@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'test_message.dart';
 import 'escrow_process.dart';
-import 'pending_exchanges_widget.dart';
 
 class ExchangePage extends StatefulWidget {
   final String opEmail;
@@ -97,19 +96,6 @@ class _ExchangePageState extends State<ExchangePage> {
               ),
             SizedBox(height: 16.0),
             Divider(),
-            Container(
-              // Wrap the Column in a Container and provide a height
-              height: MediaQuery.of(context).size.height * 0.5, // for example
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    PendingExchangesWidget(
-                        loggedInUserEmail: widget.loggedInUserEmail,
-                        productId: widget.productId),
-                  ],
-                ),
-              ),
-            ),
           ],
         ),
       ),

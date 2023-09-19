@@ -8,6 +8,7 @@ class MyDrawer extends StatelessWidget {
   final void Function()? onSignoutTap;
   final void Function()? onMessageTap;
   final void Function()? onProductTap;
+  final void Function()? onExchangeTap;
 
   const MyDrawer({
     super.key,
@@ -15,6 +16,7 @@ class MyDrawer extends StatelessWidget {
     required this.onSignoutTap,
     required this.onMessageTap,
     required this.onProductTap,
+    required this.onExchangeTap,
   });
 
   Future<int> countUnreadConversations() async {
@@ -68,6 +70,12 @@ class MyDrawer extends StatelessWidget {
             icon: Icons.article,
             text: "M Y  P R O D U C T S",
             onTap: onProductTap),
+
+        //Exchanges
+        MyListTile(
+            icon: Icons.swap_horiz,
+            text: "E X C H A N G E S",
+            onTap: onExchangeTap),
 
         //messages
         FutureBuilder<int>(

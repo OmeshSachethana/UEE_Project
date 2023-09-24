@@ -121,6 +121,24 @@ class HomePage extends StatelessWidget {
           },
         ),
         actions: [
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.notifications),
+            offset: const Offset(0, 50),
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              const PopupMenuItem<String>(
+                value: 'Notification 1',
+                child: Text('Notification 1'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'Notification 2',
+                child: Text('Notification 2'),
+              ),
+              // Add more notifications here
+            ],
+            onSelected: (String value) {
+              // Handle your notification selection here
+            },
+          ),
           IconButton(
             onPressed: () => signUserOut(context),
             icon: const Icon(Icons.logout),

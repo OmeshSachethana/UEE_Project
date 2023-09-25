@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:new_app/pages/exchanges_widget.dart';
+import 'package:new_app/pages/exchange/exchanges_widget.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 

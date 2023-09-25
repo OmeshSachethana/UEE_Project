@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'test_message.dart';
-import 'escrow_process.dart';
+import 'exchange/escrow_process.dart';
 
 class ExchangePage extends StatefulWidget {
   final String opEmail;

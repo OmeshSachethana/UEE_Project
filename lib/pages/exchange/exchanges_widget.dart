@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:intl/intl.dart';
+
+import 'exchange_dialog.dart';
 
 class ExchangesWidget extends StatefulWidget {
   final String loggedInUserEmail;
@@ -61,7 +64,7 @@ class _ExchangesWidgetState extends State<ExchangesWidget> {
       builder: (BuildContext context,
           AsyncSnapshot<List<QueryDocumentSnapshot>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
@@ -79,15 +82,15 @@ class _ExchangesWidgetState extends State<ExchangesWidget> {
           children: <Widget>[
             Text(
               'No $status Exchanges',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             Padding(
               padding: const EdgeInsets.all(40.0),
               child: Image.asset(
                 'lib/images/$status.png',
-                width: 100,
-                height: 100,
-                color: Color.fromRGBO(255, 255, 255, 0.896),
+                width: 150,
+                height: 150,
+                color: const Color.fromRGBO(255, 255, 255, 0.896),
                 colorBlendMode: BlendMode.lighten,
               ),
             ),
@@ -124,23 +127,57 @@ class _ExchangesWidgetState extends State<ExchangesWidget> {
                       return const SizedBox.shrink();
                     }
                     var product = productSnapshot.data!;
-                    return ListTile(
-                      contentPadding: EdgeInsets.all(8.0),
-                      leading: product['image'] != null
-                          ? Image.network(product['image'],
-                              width: 50, height: 50)
-                          : null,
-                      title: Text(product['name'] ?? ''),
-                      subtitle: Text('Category:${product['category'] ?? ''}'),
-                      trailing: product['price'] != null &&
-                              product['quantity'] != null
-                          ? Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Text('Price:${product['price']}\nQuantity:'
-                                    '${product['quantity']}'),
-                                Expanded(
-                                  child: ElevatedButton(
+                    return GestureDetector(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return ExchangeDialog(
+                              exchangeDetails: 'Sender: ${doc['senderEmail']}\n'
+                                  'Recipient: ${doc['recipientEmail']}\n'
+                                  'Product: ${product['name']}\n'
+                                  'Category: ${product['category']}\n'
+                                  'Price: ${product['price']}\n'
+                                  'Quantity: ${product['quantity']}\n'
+                                  'Status: ${doc['status']}\n\n'
+                                  '${DateFormat('dd-mm-yyyy').format(doc['timestamp'].toDate())}\n',
+                              imageUrl:
+                                  doc['senderEmail'] == widget.loggedInUserEmail
+                                      ? product['image']
+                                      : doc['item'],
+                            );
+                          },
+                        );
+                      },
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.all(16.0),
+                        leading: doc['senderEmail'] == widget.loggedInUserEmail
+                            ? (product['image'] != null
+                                ? Image.network(product['image'],
+                                    width: 100, height: 100)
+                                : null)
+                            : (doc['item'] != null
+                                ? Image.network(doc['item'],
+                                    width: 100, height: 100)
+                                : null),
+                        title: Text(product['name'] ?? '',
+                            style: const TextStyle(fontSize: 20)),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text('Category:${product['category'] ?? ''}\n',
+                                style: const TextStyle(fontSize: 16)),
+                            Text('Price:${product['price']}\nQuantity:'
+                                '${product['quantity']}'),
+                          ],
+                        ),
+                        trailing: product['price'] != null &&
+                                product['quantity'] != null &&
+                                doc['senderEmail'] != widget.loggedInUserEmail
+                            ? Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  ElevatedButton(
                                     onPressed: () async {
                                       await FirebaseFirestore.instance
                                           .collection('exchanges')
@@ -148,8 +185,10 @@ class _ExchangesWidgetState extends State<ExchangesWidget> {
                                           .update({
                                         'status': doc['status'] == 'Confirmed'
                                             ? 'Rejected'
-                                            : 'Confirmed'
+                                            : 'Confirmed',
+                                        'timestamp': Timestamp.now(),
                                       });
+                                      setState(() {});
                                     },
                                     style: ButtonStyle(
                                       backgroundColor:
@@ -163,10 +202,10 @@ class _ExchangesWidgetState extends State<ExchangesWidget> {
                                         ? 'Reject'
                                         : 'Confirm'),
                                   ),
-                                ),
-                              ],
-                            )
-                          : null,
+                                ],
+                              )
+                            : null,
+                      ),
                     );
                   },
                 );
@@ -183,11 +222,13 @@ class _ExchangesWidgetState extends State<ExchangesWidget> {
         .collection('exchanges')
         .where('status', isEqualTo: status)
         .where('recipientEmail', isEqualTo: widget.loggedInUserEmail)
+        .orderBy('timestamp', descending: true)
         .snapshots();
     var stream2 = FirebaseFirestore.instance
         .collection('exchanges')
         .where('status', isEqualTo: status)
         .where('senderEmail', isEqualTo: widget.loggedInUserEmail)
+        .orderBy('timestamp', descending: true)
         .snapshots();
 
     return Rx.combineLatest2<QuerySnapshot, QuerySnapshot,

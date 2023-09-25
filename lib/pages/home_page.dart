@@ -6,7 +6,7 @@ import 'package:new_app/pages/my_products_page.dart';
 import 'package:new_app/pages/profile_page.dart';
 import 'package:new_app/pages/sample_product_page.dart';
 import 'package:new_app/pages/all_conversations_page.dart';
-import 'package:new_app/pages/exchanges_screen.dart';
+import 'package:new_app/pages/exchange/exchanges_screen.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);

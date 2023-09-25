@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:new_app/pages/exchanges_widget.dart';
+import 'package:new_app/pages/exchange/exchanges_widget.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -14,18 +14,9 @@ class ExchangesScreen extends StatelessWidget {
         elevation: 0, // Remove shadow
         leading: BackButton(color: Colors.black), // Use BackButton widget
       ),
-      body: SingleChildScrollView(
-        // Wrap your Column with SingleChildScrollView
-        child: Column(
-          children: [
-            ExchangesWidget(
-                loggedInUserEmail: loggedInUserEmail, status: 'Pending'),
-            ExchangesWidget(
-                loggedInUserEmail: loggedInUserEmail, status: 'Confirmed'),
-            ExchangesWidget(
-                loggedInUserEmail: loggedInUserEmail, status: 'Rejected'),
-          ],
-        ),
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+        child: ExchangesWidget(loggedInUserEmail: loggedInUserEmail),
       ),
     );
   }

@@ -38,11 +38,10 @@ dependencies:
   firebase_auth: ^4.7.2
   google_sign_in: ^6.1.4
   cloud_firestore: ^4.8.4
-  
   firebase_storage: ^11.2.6
   image_picker: ^0.8.4+5
-  path_provider: ^2.1.1
   rxdart: ^0.27.7
+  path_provider: ^2.1.1
 
 dev_dependencies:
   flutter_test:

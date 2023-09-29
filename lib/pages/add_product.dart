@@ -13,8 +13,10 @@ class AddProductPage extends StatefulWidget {
 class _AddProductPageState extends State<AddProductPage> {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController quantityController = TextEditingController();
-  final TextEditingController priceController = TextEditingController();
+  //final TextEditingController priceController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
+  final TextEditingController startingPriceController = TextEditingController();
+  final TextEditingController timerController = TextEditingController();
 
   final User user = FirebaseAuth.instance.currentUser!;
   final List<String> categories = [
@@ -29,24 +31,43 @@ class _AddProductPageState extends State<AddProductPage> {
   String? _imageUrl;
   late String currentUserEmail;
   File? _imageFile;
+  bool isAuctionProduct = false;
+
+  void _handleProductTypeChange(bool? value) {
+    if (value != null) {
+      setState(() {
+        isAuctionProduct = value;
+      });
+    }
+  }
 
   Future<void> _addProduct() async {
     try {
-      await FirebaseFirestore.instance.collection('products').add({
+      Map<String, dynamic> productData = {
         'name': titleController.text,
         'quantity': int.parse(quantityController.text),
-        'price': double.parse(priceController.text),
+        //'price': double.parse(priceController.text),
         'description': descriptionController.text,
         'image': _imageUrl,
         'category': selectedCategory,
         'op_email': user.email,
-      });
+      };
+
+      if (isAuctionProduct) {
+        productData['starting_price'] =
+            double.parse(startingPriceController.text);
+        productData['timer'] = int.parse(timerController.text);
+      }
+
+      await FirebaseFirestore.instance.collection('products').add(productData);
 
       // Clear the text fields after adding the product
       titleController.clear();
       quantityController.clear();
-      priceController.clear();
+      //priceController.clear();
       descriptionController.clear();
+      startingPriceController.clear();
+      timerController.clear();
       setState(() {
         _imageUrl = null;
       });
@@ -88,6 +109,23 @@ class _AddProductPageState extends State<AddProductPage> {
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Text('Product Type:'),
+                  Radio<bool>(
+                    value: false,
+                    groupValue: isAuctionProduct,
+                    onChanged: _handleProductTypeChange,
+                  ),
+                  Text('Normal'),
+                  Radio<bool>(
+                    value: true,
+                    groupValue: isAuctionProduct,
+                    onChanged: _handleProductTypeChange,
+                  ),
+                  Text('Auction'),
+                ],
+              ),
               DropdownButtonFormField(
                 value: selectedCategory,
                 items: categories.map((category) {
@@ -114,15 +152,31 @@ class _AddProductPageState extends State<AddProductPage> {
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(labelText: 'Quantity'),
               ),
-              TextField(
-                controller: priceController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: 'Price'),
-              ),
+              // TextField(
+              //   controller: priceController,
+              //   keyboardType: TextInputType.number,
+              //   decoration: const InputDecoration(labelText: 'Price'),
+              // ),
               TextField(
                 controller: descriptionController,
                 decoration: const InputDecoration(labelText: 'Description'),
               ),
+              if (isAuctionProduct)
+                Column(
+                  children: [
+                    TextField(
+                      controller: startingPriceController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(labelText: 'Starting Price'),
+                    ),
+                    TextField(
+                      controller: timerController,
+                      keyboardType: TextInputType.number,
+                      decoration:
+                          InputDecoration(labelText: 'Timer (in minutes)'),
+                    ),
+                  ],
+                ),
               ElevatedButton(
                 onPressed: _uploadImage,
                 child: const Text('Upload Image'),

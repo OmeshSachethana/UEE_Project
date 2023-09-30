@@ -2,101 +2,137 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'product_details_page.dart';
 
+
+
 class ProductPage extends StatelessWidget {
+
+  Widget _buildProduct({String? name, double? price , String? image}) {
+    return Card(
+            child: Container(
+              height: 210,
+              width: 180,
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    height: 145,
+                    width: 140,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(image : AssetImage("lib/images/$image"),)
+                    ),
+                  ),
+                  Text("\$ $price",style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Color(0xfff9b96d6)),),
+                  Text("$name",style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Color(0xfff9b96d6)),)
+                ]),
+            ), 
+          );
+  }
+
+  Widget _buildCategory(String image , int color) {
+    return CircleAvatar(
+              maxRadius: 41,
+              backgroundColor: Color(color),
+              child: Container(
+                height: 40,
+                width: 35,
+                child: Image(
+                  color: Colors.white,
+                  image: AssetImage("lib/images/$image")
+                ),
+              ),
+
+            ); 
+  }
+  
   final String loggedInUserEmail;
 
   const ProductPage({Key? key, required this.loggedInUserEmail})
       : super(key: key);
 
-  void navigateToProductDetails(
-      BuildContext context, DocumentSnapshot product) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ProductDetailsPage(
-            product: product, loggedInUserEmail: loggedInUserEmail),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('products').snapshots(),
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.hasError) {
-            return const Text('Something went wrong');
-          }
+      body: SingleChildScrollView(
 
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Text("Loading");
-          }
-
-          return GridView.count(
-            crossAxisCount: 2,
-            children: snapshot.data!.docs.map((DocumentSnapshot document) {
-              Map<String, dynamic> data =
-                  document.data() as Map<String, dynamic>;
-              return GestureDetector(
-                onTap: () => navigateToProductDetails(context, document),
-                child: Center(
-                  child: Card(
-                    child: Column(
-                      children: <Widget>[
-                        if (data['image'] != null)
-                          Image.network(data['image'], width: 170, height: 100),
-                        if (data['name'] != null)
-                          Text(
-                            data['name'],
-                            style: Theme.of(context).textTheme.headlineSmall,
-                          ),
-                        if (data['price'] != null)
-                          Text(
-                            'Price: ${data['price']}',
-                            style: Theme.of(context).textTheme.subtitle1,
-                          ),
-                      ],
+        child: Column(
+          children: <Widget>[
+            TextFormField(
+              decoration: InputDecoration(
+                prefixIcon: Icon(Icons.search),
+                hintText: "Search Something",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30)
+                )
+              ),
+            ),
+            Container(
+              height: 120,
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children:<Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget> [
+                  Text(
+                    "Products",
+                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                     ),
+                  Text(
+                    "See All",
+                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)
+                    )],
+                )
+              ],
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+              
+                  Row(children: <Widget>[
+                  _buildProduct(image: "Shirt.png" , price: 30.0 , name: "Mens Long Sleeve T-Shirt"),
+                  _buildProduct(image: "Shirt.png" , price: 30.0 , name: "Mens Long Sleeve T-Shirt"),
+              
+                ],),
+                Row(children: <Widget>[
+                  _buildProduct(image: "Shirt.png" , price: 30.0 , name: "Mens Long Sleeve T-Shirt"),
+                  _buildProduct(image: "Shirt.png" , price: 30.0 , name: "Mens Long Sleeve T-Shirt"),
+              
+                ],),
+                Container(
+                  height: 70,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                  Text(
+                    "Categories",
+                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                    ),
+                  Text(
+                    "See All",
+                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)
+                    )
+                    ],
                   ),
                 ),
-              );
-            }).toList(),
-          );
-        },
-      ),
-    );
-  }
-}
-
-class ProductDetailsPage extends StatelessWidget {
-  final DocumentSnapshot product;
-  final String loggedInUserEmail; // Add this
-
-  const ProductDetailsPage(
-      {Key? key, required this.product, required this.loggedInUserEmail})
-      : super(key: key); // And this
-
-  @override
-  Widget build(BuildContext context) {
-    Map<String, dynamic> data = product.data() as Map<String, dynamic>;
-    return Scaffold(
-      appBar: AppBar(
-        title: data['name'] != null ? Text(data['name']) : const Text(''),
-        backgroundColor: Colors.grey[900],
-      ),
-      body: GestureDetector(
-          child: ExchangePage(
-              opEmail: data['op_email'],
-              loggedInUserEmail: loggedInUserEmail,
-              productId: product.id) // Pass it here
-          // child: Center(
-          //   child: Text(
-          //     'Details for ${data['Name']}',
-          //     style: Theme.of(context).textTheme.headline4,
-          //   ),
-          // ),
-          ),
+                Container(
+                  height: 60,
+                  child: Row(
+                    children: <Widget>[
+                      _buildCategory( "t-shirt.svg" , 0xffDB76E4 ),
+                      _buildCategory("trousers.png" , 0xff5CC9EB),
+                      _buildCategory("hand-watch.png" , 0xff5BE5A3),
+                      _buildCategory("sport-shoe.png" , 0xffEB8181),
+                      _buildCategory("tie.png" , 0xffD3CD4C)
+                    ],
+                  ),
+                )
+                
+                ],
+            ),
+          ],
+        ),
+      )
     );
   }
 }

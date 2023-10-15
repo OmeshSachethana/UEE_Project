@@ -5,6 +5,7 @@ import 'package:new_app/components/drawer.dart';
 import 'package:new_app/pages/my_products_page.dart';
 import 'package:new_app/pages/profile_page.dart';
 import 'package:new_app/pages/recycle_center.dart';
+import 'package:new_app/pages/recycle_product.dart';
 import 'package:new_app/pages/sample_product_page.dart';
 import 'package:new_app/pages/all_conversations_page.dart';
 import 'package:new_app/pages/exchange/exchanges_screen.dart';
@@ -75,6 +76,18 @@ class HomePage extends StatelessWidget {
       context,
       MaterialPageRoute(
         builder: (context) => const RecycleCenter(),
+      ),
+    );
+  }
+
+  void goToRecyclesProductPage(BuildContext context) {
+    // Pop the menu drawer
+    Navigator.pop(context);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RecycledProductsList(context),
       ),
     );
   }
@@ -165,6 +178,7 @@ class HomePage extends StatelessWidget {
         onProductTap: () => goToProductsPage(context),
         onExchangeTap: () => goToExchangesPage(context),
         onRecycleCenterTap: () => goToRecyclesPage(context),
+        onRecyclProductTap: () => goToRecyclesProductPage(context),
       ),
       body: ProductPage(loggedInUserEmail: user.email!), // Pass it here
     );

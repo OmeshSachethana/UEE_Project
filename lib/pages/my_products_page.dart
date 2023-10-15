@@ -112,6 +112,107 @@ class MyProductsPage extends StatelessWidget {
     );
   }
 
+  void _showRecycleDialog(BuildContext context, DocumentSnapshot document) {
+    Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+    TextEditingController titleController =
+        TextEditingController(text: data['name']);
+    TextEditingController quantityController =
+        TextEditingController(text: data['quantity'].toString());
+    TextEditingController priceController =
+        TextEditingController(text: data['price'].toString());
+    TextEditingController descriptionController =
+        TextEditingController(text: data['description']);
+    TextEditingController imageUrlController =
+        TextEditingController(text: data['image']);
+
+    // Add these two TextEditingController objects
+    TextEditingController assignedCenterController =
+        TextEditingController(text: null);
+    TextEditingController assignedStatusController =
+        TextEditingController(text: "Unassigned"); // Set the default value
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Recycle Product'),
+          content: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                TextField(
+                  controller: titleController,
+                  decoration: InputDecoration(labelText: 'Name'),
+                ),
+                TextField(
+                  controller: quantityController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(labelText: 'Quantity'),
+                ),
+                TextField(
+                  controller: priceController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(labelText: 'Price'),
+                ),
+                TextField(
+                  controller: descriptionController,
+                  decoration: InputDecoration(labelText: 'Description'),
+                ),
+                TextField(
+                  controller: imageUrlController,
+                  decoration: InputDecoration(labelText: 'Image URL'),
+                ),
+                // Add fields for assigned_center and assigned_status
+                TextField(
+                  controller: assignedCenterController,
+                  decoration: InputDecoration(labelText: 'Assigned Center'),
+                ),
+                TextField(
+                  controller: assignedStatusController,
+                  decoration: InputDecoration(labelText: 'Assigned Status'),
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Recycle'),
+              onPressed: () async {
+                try {
+                  await FirebaseFirestore.instance.collection('recycle').add({
+                    'name': titleController.text,
+                    'quantity': int.parse(quantityController.text),
+                    'price': double.parse(priceController.text),
+                    'description': descriptionController.text,
+                    'imageUrl': imageUrlController.text,
+                    // Add the new fields and set their default values
+                    'assigned_center': assignedCenterController.text,
+                    'assigned_status': assignedStatusController.text,
+                  });
+                  // Delete the product from the "products" collection
+                  await FirebaseFirestore.instance
+                      .collection('products')
+                      .doc(document.id)
+                      .delete();
+                  Navigator.of(context).pop();
+                } catch (e) {
+                  print('Failed to recycle product: $e');
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  //-----------------------------------------------------------------------
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -200,9 +301,13 @@ class MyProductsPage extends StatelessWidget {
                               onPressed: () =>
                                   _showDeleteDialog(context, document),
                             ),
+                            IconButton(
+                              icon: Icon(Icons.recycling),
+                              onPressed: () =>
+                                  _showRecycleDialog(context, document),
+                            ),
                           ],
-                        ),
-                        // Add other product details as needed
+                        ), // Add other product details as needed
                       );
                     },
                   ),

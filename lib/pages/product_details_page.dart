@@ -8,7 +8,10 @@ class ExchangePage extends StatefulWidget {
   final String productId;
 
   const ExchangePage(
-      {Key? key, required this.opEmail, required this.loggedInUserEmail, required this.productId})
+      {Key? key,
+      required this.opEmail,
+      required this.loggedInUserEmail,
+      required this.productId})
       : super(key: key);
 
   @override

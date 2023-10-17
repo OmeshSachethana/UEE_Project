@@ -123,9 +123,7 @@ class _ExchangesWidgetState extends State<ExchangesWidget> {
               child: const Text(
                 'Once the exchange is completed, please click on the \'completed\' button to mark the exchange as completed.',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
               ),
             ),
           ),
@@ -188,40 +186,86 @@ class _ExchangesWidgetState extends State<ExchangesWidget> {
                               '${product['quantity']}'),
                         ],
                       ),
-                      trailing: product['price'] != null &&
-                              product['quantity'] != null &&
-                              doc['senderEmail'] != widget.loggedInUserEmail
-                          ? Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                ElevatedButton(
-                                  onPressed: () async {
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          if (doc['senderEmail'] == widget.loggedInUserEmail && status == 'Pending')
+                            IconButton(
+                              icon: const Icon(Icons.delete),
+                              onPressed: () async {
+                                await FirebaseFirestore.instance
+                                    .collection('exchanges')
+                                    .doc(doc.id)
+                                    .delete();
+                                setState(() {});
+                              },
+                            ),
+                          if (product['price'] != null &&
+                              product['quantity'] != null)
+                            if (status == 'Pending' &&
+                                doc['senderEmail'] != widget.loggedInUserEmail)
+                              PopupMenuButton<String>(
+                                onSelected: (String result) async {
+                                  if (result == 'Confirm') {
                                     await FirebaseFirestore.instance
                                         .collection('exchanges')
                                         .doc(doc.id)
                                         .update({
-                                      'status': doc['status'] == 'Confirmed'
-                                          ? 'Rejected'
-                                          : 'Confirmed',
+                                      'status': 'Confirmed',
                                       'timestamp': Timestamp.now(),
                                     });
-                                    setState(() {});
-                                  },
-                                  style: ButtonStyle(
-                                    backgroundColor:
-                                        MaterialStateProperty.all<Color>(
-                                            doc['status'] == 'Confirmed'
-                                                ? const Color.fromARGB(
-                                                    255, 255, 100, 88)
-                                                : Colors.blue),
+                                  } else if (result == 'Reject') {
+                                    await FirebaseFirestore.instance
+                                        .collection('exchanges')
+                                        .doc(doc.id)
+                                        .update({
+                                      'status': 'Rejected',
+                                      'timestamp': Timestamp.now(),
+                                    });
+                                  }
+                                  setState(() {});
+                                },
+                                itemBuilder: (BuildContext context) =>
+                                    <PopupMenuEntry<String>>[
+                                  const PopupMenuItem<String>(
+                                    value: 'Confirm',
+                                    child: Text('Confirm'),
                                   ),
-                                  child: Text(doc['status'] == 'Confirmed'
-                                      ? 'Reject'
-                                      : 'Confirm'),
+                                  const PopupMenuItem<String>(
+                                    value: 'Reject',
+                                    child: Text('Reject'),
+                                  ),
+                                ],
+                              )
+                            else if (doc['senderEmail'] !=
+                                widget.loggedInUserEmail)
+                              ElevatedButton(
+                                onPressed: () async {
+                                  await FirebaseFirestore.instance
+                                      .collection('exchanges')
+                                      .doc(doc.id)
+                                      .update({
+                                    'status': doc['status'] == 'Confirmed'
+                                        ? 'Rejected'
+                                        : 'Confirmed',
+                                    'timestamp': Timestamp.now(),
+                                  });
+                                  setState(() {});
+                                },
+                                style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                          doc['status'] == 'Confirmed'
+                                              ? const Color.fromARGB(
+                                                  255, 255, 100, 88)
+                                              : Colors.blue),
                                 ),
-                              ],
-                            )
-                          : null,
+                                child: Text(doc['status'] == 'Confirmed'
+                                    ? 'Reject'
+                                    : 'Confirm'),
+                              ),
+                        ],
+                      ),
                     ),
                   );
                 },

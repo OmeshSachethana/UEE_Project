@@ -78,11 +78,6 @@ class _ConversationsPageState extends State<ConversationsPage> {
                     false) // Only fetch conversations that the sender has not deleted
             .snapshots(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
           if (snapshot.hasError) {
             return const Center(
               child: Text('Error loading conversations'),
@@ -122,11 +117,11 @@ class _ConversationsPageState extends State<ConversationsPage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Icon(
-                        Icons.chat_bubble_outline,
-                        size: 100.0,
-                        color: Colors.grey,
+                      Image(
+                        image: AssetImage('lib/images/noMessages.png'),
+                        height: 100,
                       ),
+                      Padding(padding: EdgeInsets.only(top: 20.0)),
                       Text(
                         'Start a conversation with a seller',
                         style: TextStyle(fontSize: 18.0),
@@ -158,7 +153,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
                                   backgroundColor: Colors.red,
                                   child: Text(
                                     '$unreadMessages',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         color: Colors.white, fontSize: 12.0),
                                   ),
                                 )
@@ -191,7 +186,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
                                           Navigator.of(context).pop(false),
                                     ),
                                     TextButton(
-                                      child: const Text('Delete'),
+                                      child: const Text('Delete', style: TextStyle(color: Colors.red)),
                                       onPressed: () =>
                                           Navigator.of(context).pop(true),
                                     ),

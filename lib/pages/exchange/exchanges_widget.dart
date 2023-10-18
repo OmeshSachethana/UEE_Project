@@ -7,8 +7,10 @@ import 'exchange_dialog.dart';
 
 class ExchangesWidget extends StatefulWidget {
   final String loggedInUserEmail;
+  final int initialIndex;
 
-  const ExchangesWidget({Key? key, required this.loggedInUserEmail})
+  const ExchangesWidget(
+      {Key? key, required this.loggedInUserEmail, required this.initialIndex})
       : super(key: key);
 
   @override
@@ -17,6 +19,13 @@ class ExchangesWidget extends StatefulWidget {
 
 class _ExchangesWidgetState extends State<ExchangesWidget> {
   int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.initialIndex;
+  }
+
   static const List<String> _statusOptions = [
     'Pending',
     'Confirmed',
@@ -189,7 +198,8 @@ class _ExchangesWidgetState extends State<ExchangesWidget> {
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          if (doc['senderEmail'] == widget.loggedInUserEmail && status == 'Pending')
+                          if (doc['senderEmail'] == widget.loggedInUserEmail &&
+                              status == 'Pending')
                             IconButton(
                               icon: const Icon(Icons.delete),
                               onPressed: () async {

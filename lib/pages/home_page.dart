@@ -9,6 +9,7 @@ import 'package:new_app/pages/recycle_product.dart';
 import 'package:new_app/pages/sample_product_page.dart';
 import 'package:new_app/pages/all_conversations_page.dart';
 import 'package:new_app/pages/exchange/exchanges_screen.dart';
+import '../components/notifications.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
@@ -147,24 +148,7 @@ class HomePage extends StatelessWidget {
           },
         ),
         actions: [
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.notifications),
-            offset: const Offset(0, 50),
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-              const PopupMenuItem<String>(
-                value: 'Notification 1',
-                child: Text('Notification 1'),
-              ),
-              const PopupMenuItem<String>(
-                value: 'Notification 2',
-                child: Text('Notification 2'),
-              ),
-              // Add more notifications here
-            ],
-            onSelected: (String value) {
-              // Handle your notification selection here
-            },
-          ),
+          buildNotificationsButton(),
           IconButton(
             onPressed: () => signUserOut(context),
             icon: const Icon(Icons.logout),

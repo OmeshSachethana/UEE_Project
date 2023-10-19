@@ -17,7 +17,7 @@ class _ViewProductPageState extends State<ViewProductPage> {
   final TextEditingController bidController = TextEditingController();
   bool canPlaceBid = true;
   Duration remainingTime = Duration.zero;
-  Timer? _timer; // Make _timer nullable
+  Timer? _timer;
   bool _timerStarted = false;
   StreamController<Duration> timerStreamController =
       StreamController<Duration>();
@@ -44,7 +44,6 @@ class _ViewProductPageState extends State<ViewProductPage> {
 
       _timer = Timer.periodic(Duration(seconds: 1), (timer) {
         if (remainingTime.inSeconds > 0 && mounted) {
-          // Check if widget is still mounted
           setState(() {
             remainingTime = remainingTime - Duration(seconds: 1);
             timerStreamController
@@ -135,18 +134,26 @@ class _ViewProductPageState extends State<ViewProductPage> {
       int timerSeconds = widget.document['timer'];
       DateTime endTime = DateTime.now().add(Duration(seconds: timerSeconds));
 
+      if (endTime.isAfter(DateTime.now()) && mounted) {
+        remainingTime = endTime.difference(DateTime.now());
+        timerStreamController.add(remainingTime);
+      }
+
       _timer = Timer.periodic(Duration(seconds: 1), (timer) {
         if (endTime.isAfter(DateTime.now()) && mounted) {
-          // Check if widget is still mounted
           setState(() {
             remainingTime = endTime.difference(DateTime.now());
-            timerStreamController
-                .add(remainingTime); // Send update to the stream
+            timerStreamController.add(remainingTime);
           });
         } else {
           timer.cancel();
         }
       });
+
+      // Call setState to trigger a UI update
+      if (mounted) {
+        setState(() {});
+      }
     } catch (e) {
       print('Failed to start timer: $e');
     }

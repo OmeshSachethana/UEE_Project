@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:async';
 
 class ViewProductPage extends StatefulWidget {
   final DocumentSnapshot document;
@@ -15,6 +16,74 @@ class _ViewProductPageState extends State<ViewProductPage> {
   final User? user = FirebaseAuth.instance.currentUser;
   final TextEditingController bidController = TextEditingController();
   bool canPlaceBid = true;
+  Duration remainingTime = Duration.zero;
+  Timer? _timer; // Make _timer nullable
+  bool _timerStarted = false;
+  StreamController<Duration> timerStreamController =
+      StreamController<Duration>();
+  List<DocumentSnapshot> latestBids = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Check if timer has already started
+    Map<String, dynamic>? data =
+        widget.document.data() as Map<String, dynamic>?;
+    _timerStarted = data?['timer_started'] ?? false;
+
+    // If timer is started, initialize timer
+    if (_timerStarted) {
+      int timerSeconds = widget.document['timer'];
+      DateTime createdAt =
+          (widget.document['created_at'] as Timestamp).toDate();
+      DateTime endTime = createdAt.add(Duration(seconds: timerSeconds));
+      DateTime now = DateTime.now();
+      remainingTime =
+          endTime.isAfter(now) ? endTime.difference(now) : Duration.zero;
+
+      _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+        if (remainingTime.inSeconds > 0 && mounted) {
+          // Check if widget is still mounted
+          setState(() {
+            remainingTime = remainingTime - Duration(seconds: 1);
+            timerStreamController
+                .add(remainingTime); // Send update to the stream
+          });
+        } else {
+          timer.cancel();
+        }
+      });
+    }
+
+    // Load latest bids only once when the widget is first created
+    _loadLatestBids();
+  }
+
+  void _loadLatestBids() async {
+    try {
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
+          .collection('products')
+          .doc(widget.document.id)
+          .collection('bids')
+          .orderBy('bid_amount', descending: true)
+          .limit(3)
+          .get();
+
+      setState(() {
+        latestBids = snapshot.docs;
+      });
+    } catch (e) {
+      print('Failed to load latest bids: $e');
+    }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel(); // Cancel the timer if it's not null
+    timerStreamController.close(); // Close the stream controller
+    super.dispose();
+  }
 
   void _placeBid() async {
     try {
@@ -50,6 +119,36 @@ class _ViewProductPageState extends State<ViewProductPage> {
       }
     } catch (e) {
       print('Failed to place bid: $e');
+    }
+  }
+
+  void _startTimer() async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('products')
+          .doc(widget.document.id)
+          .update({
+        'timer_started': true,
+        'created_at': FieldValue.serverTimestamp(),
+      });
+
+      int timerSeconds = widget.document['timer'];
+      DateTime endTime = DateTime.now().add(Duration(seconds: timerSeconds));
+
+      _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+        if (endTime.isAfter(DateTime.now()) && mounted) {
+          // Check if widget is still mounted
+          setState(() {
+            remainingTime = endTime.difference(DateTime.now());
+            timerStreamController
+                .add(remainingTime); // Send update to the stream
+          });
+        } else {
+          timer.cancel();
+        }
+      });
+    } catch (e) {
+      print('Failed to start timer: $e');
     }
   }
 
@@ -95,139 +194,75 @@ class _ViewProductPageState extends State<ViewProductPage> {
                   ],
                 ),
               const SizedBox(height: 20),
-              StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection('products')
-                    .doc(widget.document.id)
-                    .collection('bids')
-                    .orderBy('bid_amount', descending: true)
-                    .limit(3)
-                    .snapshots(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text('Error: ${snapshot.error}'),
-                    );
-                  }
-
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      const Text(
-                        'Latest Bids',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: snapshot.data!.docs.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          DocumentSnapshot bidDocument =
-                              snapshot.data!.docs[index];
-                          Map<String, dynamic> bidData =
-                              bidDocument.data() as Map<String, dynamic>;
-
-                          return Card(
-                            elevation: 3,
-                            margin: const EdgeInsets.symmetric(vertical: 5),
-                            child: ListTile(
-                              title: Text('User: ${bidData['user_email']}'),
-                              subtitle:
-                                  Text('Bid Amount: ${bidData['bid_amount']}'),
-                              trailing: Text(
-                                bidData.containsKey('timestamp') &&
-                                        bidData['timestamp'] != null
-                                    ? (bidData['timestamp'] as Timestamp)
-                                        .toDate()
-                                        .toString()
-                                    : 'Timestamp not available',
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  );
-                },
-              ),
-              const SizedBox(height: 20),
-              StreamBuilder<DocumentSnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection('products')
-                    .doc(widget.document.id)
-                    .snapshots(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<DocumentSnapshot> snapshot) {
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text('Error: ${snapshot.error}'),
-                    );
-                  }
-
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-
-                  bool isOwner = snapshot.data!['op_email'] == user!.email;
-                  bool timerStarted = snapshot.data!['timer_started'];
-
-                  if (isOwner && !timerStarted) {
-                    return ElevatedButton(
-                      onPressed: _startTimer,
-                      child: const Text('Start Timer'),
-                    );
-                  }
-
-                  Timestamp? endTime = snapshot.data!['timer_end'];
-
-                  if (endTime != null) {
-                    DateTime endDateTime = endTime.toDate();
-                    DateTime now = DateTime.now();
-                    Duration remainingTime = endDateTime.isAfter(now)
-                        ? endDateTime.difference(now)
-                        : const Duration(seconds: 0);
-
-                    return Text(
-                      'Time Remaining: ${remainingTime.inMinutes} minutes ${remainingTime.inSeconds.remainder(60)} seconds',
-                      style: const TextStyle(
+              if (latestBids.isNotEmpty)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    const Text(
+                      'Latest Bids',
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 18,
+                        fontSize: 20,
                       ),
-                    );
-                  }
+                    ),
+                    const SizedBox(height: 10),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: latestBids.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        DocumentSnapshot bidDocument = latestBids[index];
+                        Map<String, dynamic> bidData =
+                            bidDocument.data() as Map<String, dynamic>;
 
-                  return const SizedBox.shrink();
-                },
-              ),
+                        return Card(
+                          elevation: 3,
+                          margin: const EdgeInsets.symmetric(vertical: 5),
+                          child: ListTile(
+                            title: Text('User: ${bidData['user_email']}'),
+                            subtitle:
+                                Text('Bid Amount: ${bidData['bid_amount']}'),
+                            trailing: Text(
+                              bidData.containsKey('timestamp') &&
+                                      bidData['timestamp'] != null
+                                  ? (bidData['timestamp'] as Timestamp)
+                                      .toDate()
+                                      .toString()
+                                  : 'Timestamp not available',
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              const SizedBox(height: 20),
+              if (_timerStarted)
+                StreamBuilder<Duration>(
+                  stream: timerStreamController.stream,
+                  builder:
+                      (BuildContext context, AsyncSnapshot<Duration> snapshot) {
+                    if (snapshot.hasData) {
+                      return Text(
+                        'Time Remaining: ${snapshot.data!.inMinutes} minutes ${snapshot.data!.inSeconds.remainder(60)} seconds',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      );
+                    } else {
+                      return Container(); // Placeholder while waiting for data
+                    }
+                  },
+                ),
+              if (!_timerStarted && user!.email == data['op_email'])
+                ElevatedButton(
+                  onPressed: _startTimer,
+                  child: const Text('Start Timer'),
+                ),
             ],
           ),
         ),
       ),
     );
-  }
-
-  void _startTimer() async {
-    try {
-      await FirebaseFirestore.instance
-          .collection('products')
-          .doc(widget.document.id)
-          .update({
-        'timer_started': true,
-      });
-    } catch (e) {
-      print('Failed to start timer: $e');
-    }
   }
 }

@@ -10,6 +10,7 @@ import 'package:new_app/pages/sample_product_page.dart';
 import 'package:new_app/pages/all_conversations_page.dart';
 import 'package:new_app/pages/exchange/exchanges_screen.dart';
 import '../components/notifications.dart';
+import 'auction_products_page.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
@@ -41,6 +42,18 @@ class HomePage extends StatelessWidget {
       context,
       MaterialPageRoute(
         builder: (context) => MyProductsPage(),
+      ),
+    );
+  }
+
+  void goToAuctionPage(BuildContext context) {
+    // Pop the menu drawer
+    Navigator.pop(context);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AuctionProductsPage(),
       ),
     );
   }
@@ -162,6 +175,7 @@ class HomePage extends StatelessWidget {
         onProductTap: () => goToProductsPage(context),
         onExchangeTap: () => goToExchangesPage(context),
         onRecycleCenterTap: () => goToRecyclesPage(context),
+        onAuctionTap: () => goToAuctionPage(context),
         onRecyclProductTap: () => goToRecyclesProductPage(context),
       ),
       body: ProductPage(loggedInUserEmail: user.email!), // Pass it here

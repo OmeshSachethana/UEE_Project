@@ -113,9 +113,13 @@ class _ViewProductPageState extends State<ViewProductPage> {
           double highestBidAmount =
               highestBid != null ? highestBid['bid_amount'] : 0.0;
 
-          // Check if new bid is higher than the current highest bid
-          if (newBid <= highestBidAmount) {
-            print("Your bid must be higher than the current highest bid.");
+          // Get the starting price
+          double startingPrice = data['starting_price'];
+
+          // Check if new bid is higher than the current highest bid and the starting price
+          if (newBid <= highestBidAmount || newBid < startingPrice) {
+            print(
+                "Your bid must be higher than the current highest bid and the starting price.");
             return;
           }
 

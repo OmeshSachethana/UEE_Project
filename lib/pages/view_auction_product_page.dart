@@ -215,6 +215,36 @@ class _ViewProductPageState extends State<ViewProductPage> {
                   ],
                 ),
               const SizedBox(height: 20),
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: <Widget>[
+                      Text(
+                        'Current Highest Bid: ${latestBids.isNotEmpty ? latestBids[0]['bid_amount'] : 'No bids yet'}',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                      SizedBox(height: 10),
+                      StreamBuilder<Duration>(
+                        stream: timerStreamController.stream,
+                        builder: (BuildContext context,
+                            AsyncSnapshot<Duration> snapshot) {
+                          if (snapshot.hasData) {
+                            return Text(
+                              'Time Remaining: ${snapshot.data!.inMinutes} minutes ${snapshot.data!.inSeconds.remainder(60)} seconds',
+                              style: TextStyle(fontSize: 15),
+                            );
+                          } else {
+                            return Text('Timer not started yet',
+                                style: TextStyle(fontSize: 20));
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
               if (latestBids.isNotEmpty)
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -242,14 +272,9 @@ class _ViewProductPageState extends State<ViewProductPage> {
                             title: Text('User: ${bidData['user_email']}'),
                             subtitle:
                                 Text('Bid Amount: ${bidData['bid_amount']}'),
-                            trailing: Text(
-                              bidData.containsKey('timestamp') &&
-                                      bidData['timestamp'] != null
-                                  ? (bidData['timestamp'] as Timestamp)
-                                      .toDate()
-                                      .toString()
-                                  : 'Timestamp not available',
-                            ),
+                            trailing: Text((bidData['timestamp'] as Timestamp)
+                                .toDate()
+                                .toString()),
                           ),
                         );
                       },
@@ -257,24 +282,6 @@ class _ViewProductPageState extends State<ViewProductPage> {
                   ],
                 ),
               const SizedBox(height: 20),
-              if (_timerStarted)
-                StreamBuilder<Duration>(
-                  stream: timerStreamController.stream,
-                  builder:
-                      (BuildContext context, AsyncSnapshot<Duration> snapshot) {
-                    if (snapshot.hasData) {
-                      return Text(
-                        'Time Remaining: ${snapshot.data!.inMinutes} minutes ${snapshot.data!.inSeconds.remainder(60)} seconds',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                      );
-                    } else {
-                      return Container(); // Placeholder while waiting for data
-                    }
-                  },
-                ),
               if (!_timerStarted && user!.email == data['op_email'])
                 ElevatedButton(
                   onPressed: _startTimer,

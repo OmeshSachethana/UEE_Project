@@ -167,10 +167,22 @@ class _ExchangesWidgetState extends State<ExchangesWidget> {
                 future: doc['productRef'].get(),
                 builder: (BuildContext context,
                     AsyncSnapshot<DocumentSnapshot> productSnapshot) {
-                  if (!productSnapshot.hasData) {
+                  if (!productSnapshot.hasData ||
+                      !productSnapshot.data!.exists) {
                     return const SizedBox.shrink();
                   }
-                  var product = productSnapshot.data!;
+                  var productData =
+                      productSnapshot.data!.data() as Map<String, dynamic>;
+                  if (productData == null) {
+                    return const SizedBox.shrink();
+                  }
+                  var product = {
+                    'name': productData['name'],
+                    'category': productData['category'],
+                    'price': productData['price'],
+                    'quantity': productData['quantity'],
+                    'image': productData['image']
+                  };
                   return GestureDetector(
                     onTap: () {
                       showDialog(

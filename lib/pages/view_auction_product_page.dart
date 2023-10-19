@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async';
 
+import '../components/timer.dart';
+
 class ViewProductPage extends StatefulWidget {
   final DocumentSnapshot document;
 
@@ -16,6 +18,10 @@ class _ViewProductPageState extends State<ViewProductPage> {
   final User? user = FirebaseAuth.instance.currentUser;
   final TextEditingController bidController = TextEditingController();
   bool canPlaceBid = true;
+
+  AuctionTimer auctionTimer =
+      AuctionTimer(); // Create an instance of AuctionTimer
+
   Duration remainingTime = Duration.zero;
   Timer? _timer;
   bool _timerStarted = false;
@@ -132,23 +138,9 @@ class _ViewProductPageState extends State<ViewProductPage> {
       });
 
       int timerSeconds = widget.document['timer'];
-      DateTime endTime = DateTime.now().add(Duration(seconds: timerSeconds));
 
-      if (endTime.isAfter(DateTime.now()) && mounted) {
-        remainingTime = endTime.difference(DateTime.now());
-        timerStreamController.add(remainingTime);
-      }
-
-      _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-        if (endTime.isAfter(DateTime.now()) && mounted) {
-          setState(() {
-            remainingTime = endTime.difference(DateTime.now());
-            timerStreamController.add(remainingTime);
-          });
-        } else {
-          timer.cancel();
-        }
-      });
+      auctionTimer.startTimer(timerSeconds, setState,
+          mounted); // Use the AuctionTimer instance to start the timer
 
       // Call setState to trigger a UI update
       if (mounted) {

@@ -107,6 +107,18 @@ class _ViewProductPageState extends State<ViewProductPage> {
             return;
           }
 
+          // Get the current highest bid
+          DocumentSnapshot? highestBid =
+              latestBids.isNotEmpty ? latestBids[0] : null;
+          double highestBidAmount =
+              highestBid != null ? highestBid['bid_amount'] : 0.0;
+
+          // Check if new bid is higher than the current highest bid
+          if (newBid <= highestBidAmount) {
+            print("Your bid must be higher than the current highest bid.");
+            return;
+          }
+
           await FirebaseFirestore.instance
               .collection('products')
               .doc(widget.document.id)

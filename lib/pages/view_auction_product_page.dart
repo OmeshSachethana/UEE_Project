@@ -92,6 +92,12 @@ class _ViewProductPageState extends State<ViewProductPage> {
 
   void _placeBid() async {
     try {
+      // Check if the timer is over
+      if (remainingTime.inSeconds <= 0) {
+        print("The auction has ended. You cannot place a bid.");
+        return;
+      }
+
       double newBid = double.parse(bidController.text);
 
       if (user != null && widget.document.exists) {

@@ -77,7 +77,26 @@ class _ExchangesWidgetState extends State<ExchangesWidget> {
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
-          return _buildList(snapshot.data!, status);
+          return FutureBuilder<List<DocumentSnapshot>>(
+            future: Future.wait(
+                snapshot.data!.map((doc) => doc['productRef'].get())),
+            builder: (BuildContext context,
+                AsyncSnapshot<List<DocumentSnapshot>> productSnapshots) {
+              if (productSnapshots.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator();
+              } else if (productSnapshots.hasError) {
+                return Text('Error: ${productSnapshots.error}');
+              } else {
+                var validData = <QueryDocumentSnapshot>[];
+                for (var i = 0; i < productSnapshots.data!.length; i++) {
+                  if (productSnapshots.data![i].exists) {
+                    validData.add(snapshot.data![i]);
+                  }
+                }
+                return _buildList(validData, status);
+              }
+            },
+          );
         }
       },
     );

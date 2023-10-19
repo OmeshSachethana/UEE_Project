@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:new_app/components/drawer.dart';
-import 'package:new_app/pages/auction_products_page.dart';
 import 'package:new_app/pages/my_products_page.dart';
 import 'package:new_app/pages/profile_page.dart';
 import 'package:new_app/pages/recycle_center.dart';
@@ -11,6 +10,7 @@ import 'package:new_app/pages/sample_product_page.dart';
 import 'package:new_app/pages/all_conversations_page.dart';
 import 'package:new_app/pages/exchange/exchanges_screen.dart';
 import '../components/notifications.dart';
+import 'auction_products_page.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);

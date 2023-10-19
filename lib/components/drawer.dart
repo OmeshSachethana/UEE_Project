@@ -72,7 +72,7 @@ class MyDrawer extends StatelessWidget {
 
         //PRODUCTS
         MyListTile(
-            icon: Icons.production_quantity_limits,
+            icon: Icons.article,
             text: "M Y  P R O D U C T S",
             onTap: onProductTap),
 
@@ -109,9 +109,6 @@ class MyDrawer extends StatelessWidget {
             onTap: onRecyclProductTap),
 
         MyListTile(icon: Icons.recycling, text: "auction", onTap: onAuctionTap),
-
-        MyListTile(icon: Icons.recycling, text: "auction", onTap: onAuctionTap),
-
         MyListTile(
             icon: Icons.logout, text: "L O G O U T", onTap: onSignoutTap),
       ]),

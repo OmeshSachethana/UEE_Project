@@ -20,34 +20,36 @@ class _ViewProductPageState extends State<ViewProductPage> {
     try {
       double newBid = double.parse(bidController.text);
 
-      await FirebaseFirestore.instance
-          .collection('products')
-          .doc(widget.document.id)
-          .collection('bids')
-          .add({
-        'user_email': user!.email,
-        'bid_amount': newBid,
-        'timestamp': FieldValue.serverTimestamp(),
-      });
+      if (user != null && widget.document.exists) {
+        Map<String, dynamic>? data =
+            widget.document.data() as Map<String, dynamic>?;
 
-      setState(() {
-        canPlaceBid = false;
-      });
+        if (data != null) {
+          String opEmail = data['op_email'];
+
+          if (opEmail == user?.email) {
+            // Current user is the owner of the product, don't allow bidding.
+            print("You cannot bid on your own product.");
+            return;
+          }
+
+          await FirebaseFirestore.instance
+              .collection('products')
+              .doc(widget.document.id)
+              .collection('bids')
+              .add({
+            'user_email': user?.email,
+            'bid_amount': newBid,
+            'timestamp': FieldValue.serverTimestamp(),
+          });
+
+          setState(() {
+            canPlaceBid = false;
+          });
+        }
+      }
     } catch (e) {
       print('Failed to place bid: $e');
-    }
-  }
-
-  void _startTimer() async {
-    try {
-      await FirebaseFirestore.instance
-          .collection('products')
-          .doc(widget.document.id)
-          .update({
-        'timer_started': true,
-      });
-    } catch (e) {
-      print('Failed to start timer: $e');
     }
   }
 
@@ -69,7 +71,12 @@ class _ViewProductPageState extends State<ViewProductPage> {
               Text('Description: ${data['description']}'),
               Image.network(data['image']),
               const SizedBox(height: 20),
-              if (canPlaceBid && user != null)
+              if (!canPlaceBid)
+                const Text('You have already placed a bid on this product.'),
+              if (canPlaceBid &&
+                  user != null &&
+                  widget.document.exists &&
+                  data['op_email'] != user?.email)
                 Row(
                   children: [
                     Expanded(
@@ -87,8 +94,6 @@ class _ViewProductPageState extends State<ViewProductPage> {
                     ),
                   ],
                 ),
-              if (!canPlaceBid)
-                const Text('You have already placed a bid on this product.'),
               const SizedBox(height: 20),
               StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
@@ -211,5 +216,18 @@ class _ViewProductPageState extends State<ViewProductPage> {
         ),
       ),
     );
+  }
+
+  void _startTimer() async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('products')
+          .doc(widget.document.id)
+          .update({
+        'timer_started': true,
+      });
+    } catch (e) {
+      print('Failed to start timer: $e');
+    }
   }
 }

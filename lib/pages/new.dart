@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class RecycledProductDetailEditPage extends StatelessWidget {
   final Map<String, dynamic> productData;
@@ -35,31 +34,9 @@ class RecycledProductDetailEditPage extends StatelessWidget {
         'assigned_status': assignedStatusController.text,
         'assigned_center': assignedCenterMYController.text,
       });
-      print('Product updated successfully.');
+      print('Product updated successfully.'); // Add this print statement
     } catch (e) {
       print('Failed to update product: $e');
-    }
-  }
-
-  Future<void> _sendEmail() async {
-    final recipientEmail = productData['assigned_center_email'];
-    final subject = 'Regarding Recycle Product: ${productData['name']}';
-    final body =
-        "Hello,\n\n I would like to discuss the recycle product ${productData['name']}.\n";
-
-    final emailUrl = Uri(
-      scheme: 'mailto',
-      path: recipientEmail,
-      queryParameters: {
-        'subject': subject,
-        'body': body,
-      },
-    );
-
-    try {
-      await launch(emailUrl.toString());
-    } catch (e) {
-      print('Error launching email: $e');
     }
   }
 
@@ -87,8 +64,11 @@ class RecycledProductDetailEditPage extends StatelessWidget {
                         image: NetworkImage(imageUrl),
                       ),
                     ),
-                    padding: EdgeInsets.all(16),
+                    padding: EdgeInsets.all(16), // Add padding here
                   ),
+                  /*ListTile(
+                    title: Text('Product Details'),
+                  ),*/
                   ListTile(
                     title: Text('Name: ${productData['name']}'),
                   ),
@@ -103,9 +83,13 @@ class RecycledProductDetailEditPage extends StatelessWidget {
                     title: Text(
                         'Assigned Center: ${productData['assigned_center']}'),
                   ),
+                  /* ListTile(
+                    title: Text(
+                        'Image URL: ${productData['imageUrl']}'), // Display image URL
+                  ),*/
                   ListTile(
                     title: ElevatedButton(
-                      onPressed: _sendEmail,
+                      onPressed: () {},
                       child: Text('Send Email'),
                     ),
                   ),
@@ -147,6 +131,7 @@ class RecycledProductDetailEditPage extends StatelessWidget {
                     title: ElevatedButton(
                       onPressed: () {
                         _updateProductDetails();
+                        // Navigate back to the previous screen when the update is complete
                         Navigator.of(context).pop();
                       },
                       child: Text('Save'),

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:new_app/components/drawer.dart';
+import 'package:new_app/pages/auction_products_page.dart';
 import 'package:new_app/pages/my_products_page.dart';
 import 'package:new_app/pages/profile_page.dart';
 import 'package:new_app/pages/recycle_center.dart';
@@ -39,6 +40,18 @@ class HomePage extends StatelessWidget {
       context,
       MaterialPageRoute(
         builder: (context) => MyProductsPage(),
+      ),
+    );
+  }
+
+  void goToAuctionPage(BuildContext context) {
+    // Pop the menu drawer
+    Navigator.pop(context);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AuctionProductsPage(),
       ),
     );
   }
@@ -165,6 +178,7 @@ class HomePage extends StatelessWidget {
         onProductTap: () => goToProductsPage(context),
         onExchangeTap: () => goToExchangesPage(context),
         onRecycleCenterTap: () => goToRecyclesPage(context),
+        onAuctionTap: () => goToAuctionPage(context),
       ),
       body: ProductPage(loggedInUserEmail: user.email!), // Pass it here
     );

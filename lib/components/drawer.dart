@@ -10,16 +10,16 @@ class MyDrawer extends StatelessWidget {
   final void Function()? onProductTap;
   final void Function()? onExchangeTap;
   final void Function()? onRecycleCenterTap;
-
-  const MyDrawer({
-    super.key,
-    required this.onProfileTap,
-    required this.onSignoutTap,
-    required this.onMessageTap,
-    required this.onProductTap,
-    required this.onExchangeTap,
-    required this.onRecycleCenterTap,
-  });
+  final void Function()? onAuctionTap;
+  const MyDrawer(
+      {super.key,
+      required this.onProfileTap,
+      required this.onSignoutTap,
+      required this.onMessageTap,
+      required this.onProductTap,
+      required this.onExchangeTap,
+      required this.onRecycleCenterTap,
+      required this.onAuctionTap});
 
   Future<int> countUnreadConversations() async {
     final user = FirebaseAuth.instance.currentUser;
@@ -100,6 +100,8 @@ class MyDrawer extends StatelessWidget {
             icon: Icons.recycling,
             text: "R E C Y C L E   C E N T E R",
             onTap: onRecycleCenterTap),
+
+        MyListTile(icon: Icons.recycling, text: "auction", onTap: onAuctionTap),
 
         MyListTile(
             icon: Icons.logout, text: "L O G O U T", onTap: onSignoutTap),

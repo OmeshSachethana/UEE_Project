@@ -77,34 +77,14 @@ class _ExchangesWidgetState extends State<ExchangesWidget> {
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
-          return FutureBuilder<Widget>(
-            future: _buildList(snapshot.data!, status),
-            builder:
-                (BuildContext context, AsyncSnapshot<Widget> listSnapshot) {
-              if (listSnapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (listSnapshot.hasError) {
-                return Text('Error: ${listSnapshot.error}');
-              } else {
-                return listSnapshot.data!;
-              }
-            },
-          );
+          return _buildList(snapshot.data!, status);
         }
       },
     );
   }
 
-  Future<Widget> _buildList(List<QueryDocumentSnapshot> data, status) async {
-    // Filter out exchanges with non-existing products
-    var filteredData = <QueryDocumentSnapshot>[];
-    for (var doc in data) {
-      var productSnapshot = await doc['productRef'].get();
-      if (productSnapshot.exists) {
-        filteredData.add(doc);
-      }
-    }
-    if (filteredData.isEmpty) {
+  Widget _buildList(List<QueryDocumentSnapshot> data, status) {
+    if (data.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -167,22 +147,10 @@ class _ExchangesWidgetState extends State<ExchangesWidget> {
                 future: doc['productRef'].get(),
                 builder: (BuildContext context,
                     AsyncSnapshot<DocumentSnapshot> productSnapshot) {
-                  if (!productSnapshot.hasData ||
-                      !productSnapshot.data!.exists) {
+                  if (!productSnapshot.hasData) {
                     return const SizedBox.shrink();
                   }
-                  var productData =
-                      productSnapshot.data!.data() as Map<String, dynamic>;
-                  if (productData == null) {
-                    return const SizedBox.shrink();
-                  }
-                  var product = {
-                    'name': productData['name'],
-                    'category': productData['category'],
-                    'price': productData['price'],
-                    'quantity': productData['quantity'],
-                    'image': productData['image']
-                  };
+                  var product = productSnapshot.data!;
                   return GestureDetector(
                     onTap: () {
                       showDialog(

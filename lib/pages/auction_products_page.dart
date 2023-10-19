@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:new_app/pages/view_product_page.dart';
+import 'package:new_app/pages/view_auction_product_page.dart';
 
 class AuctionProductsPage extends StatelessWidget {
   @override

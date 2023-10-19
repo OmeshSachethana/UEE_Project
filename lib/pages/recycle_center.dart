@@ -12,6 +12,9 @@ class _MyWidgetState extends State<RecycleCenter> {
   // text field controller
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _nearbyTownController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+
   final TextEditingController _numberController = TextEditingController();
   final TextEditingController _snController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
@@ -51,7 +54,17 @@ class _MyWidgetState extends State<RecycleCenter> {
                 TextField(
                   controller: _addressController,
                   decoration: const InputDecoration(
-                      labelText: 'Address', hintText: 'eg.Kaduwela'),
+                      labelText: 'Address', hintText: 'eg.1st Lane, Kaduwela'),
+                ),
+                TextField(
+                  controller: _nearbyTownController,
+                  decoration: const InputDecoration(
+                      labelText: 'Nearby Town', hintText: 'eg.Kaduwela'),
+                ),
+                TextField(
+                  controller: _emailController,
+                  decoration: const InputDecoration(
+                      labelText: 'Email', hintText: 'eg.ann@gmail.com'),
                 ),
                 TextField(
                   keyboardType: TextInputType.number,
@@ -77,6 +90,9 @@ class _MyWidgetState extends State<RecycleCenter> {
                     onPressed: () async {
                       final String name = _nameController.text;
                       final String address = _addressController.text;
+                      final String neartown = _nearbyTownController.text;
+                      final String email = _emailController.text;
+
                       final int? sn = int.tryParse(_snController.text);
                       final int? number = int.tryParse(_numberController.text);
                       final String description = _descriptionController.text;
@@ -86,11 +102,17 @@ class _MyWidgetState extends State<RecycleCenter> {
                           "name": name,
                           "address": address,
                           "number": number,
+                          "neartown": neartown,
+                          "email": email,
                           "sn": sn,
                           "description": description
                         });
                         _nameController.text = '';
                         _addressController.text = '';
+                        //-------------------------------------------------
+                        _nearbyTownController.text = '';
+                        _emailController.text = '';
+
                         _snController.text = '';
                         _numberController.text = '';
                         _descriptionController.text = '';
@@ -110,6 +132,10 @@ class _MyWidgetState extends State<RecycleCenter> {
     if (documentSnapshot != null) {
       _nameController.text = documentSnapshot['name'];
       _addressController.text = documentSnapshot['address'];
+
+      _nearbyTownController.text = documentSnapshot['neartown'].toString();
+      _emailController.text = documentSnapshot['email'].toString();
+
       _snController.text = documentSnapshot['sn'].toString();
       _numberController.text = documentSnapshot['number'].toString();
       _descriptionController.text = documentSnapshot['description'];
@@ -142,7 +168,18 @@ class _MyWidgetState extends State<RecycleCenter> {
                 TextField(
                   controller: _addressController,
                   decoration: const InputDecoration(
-                      labelText: 'Address', hintText: 'eg.Kaduwela'),
+                      labelText: 'Address',
+                      hintText: 'eg.1st lane, Kaduwela, '),
+                ),
+                TextField(
+                  controller: _nearbyTownController,
+                  decoration: const InputDecoration(
+                      labelText: 'Nearby Town', hintText: 'eg.Kaduwela'),
+                ),
+                TextField(
+                  controller: _emailController,
+                  decoration: const InputDecoration(
+                      labelText: 'Email', hintText: 'eg.Ann@gmail.com'),
                 ),
                 TextField(
                   keyboardType: TextInputType.number,
@@ -168,6 +205,9 @@ class _MyWidgetState extends State<RecycleCenter> {
                     onPressed: () async {
                       final String name = _nameController.text;
                       final String address = _addressController.text;
+                      final String neartown = _nearbyTownController.text;
+                      final String email = _emailController.text;
+
                       final int? sn = int.tryParse(_snController.text);
                       final int? number = int.tryParse(_numberController.text);
                       final String description = _descriptionController.text;
@@ -176,11 +216,15 @@ class _MyWidgetState extends State<RecycleCenter> {
                           "name": name,
                           "address": address,
                           "number": number,
+                          "neartown": neartown,
+                          "email": email,
                           "sn": sn,
                           "description": description
                         });
                         _nameController.text = '';
                         _addressController.text = '';
+                        _nearbyTownController.text = '';
+                        _emailController.text = '';
                         _snController.text = '';
                         _numberController.text = '';
                         _descriptionController.text = '';

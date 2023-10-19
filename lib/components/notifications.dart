@@ -10,7 +10,8 @@ StreamBuilder<QuerySnapshot<Object?>> buildNotificationsButton() {
   return StreamBuilder<QuerySnapshot>(
     stream: FirebaseFirestore.instance
         .collection('exchanges')
-        .where('senderEmail', isEqualTo: user?.email)
+        .where('status', isEqualTo: 'Pending')
+        .where('recipientEmail', isEqualTo: user?.email)
         .snapshots(),
     builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
       if (snapshot.hasError) {
@@ -34,8 +35,9 @@ StreamBuilder<QuerySnapshot<Object?>> buildNotificationsButton() {
           value: data['status'],
           child: Container(
             color: bgColor,
-            child: Text(
-                'Exchange with ${data['recipientEmail']} is ${data['status']}'),
+            child: Text(data['status'] == 'Pending'
+                ? '${data['senderEmail']} is requesting an exchange'
+                : 'Exchange with ${data['recipientEmail']} is ${data['status']}'),
           ),
         );
       }).toList();

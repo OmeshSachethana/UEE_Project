@@ -77,14 +77,34 @@ class _ExchangesWidgetState extends State<ExchangesWidget> {
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
-          return _buildList(snapshot.data!, status);
+          return FutureBuilder<Widget>(
+            future: _buildList(snapshot.data!, status),
+            builder:
+                (BuildContext context, AsyncSnapshot<Widget> listSnapshot) {
+              if (listSnapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (listSnapshot.hasError) {
+                return Text('Error: ${listSnapshot.error}');
+              } else {
+                return listSnapshot.data!;
+              }
+            },
+          );
         }
       },
     );
   }
 
-  Widget _buildList(List<QueryDocumentSnapshot> data, status) {
-    if (data.isEmpty) {
+  Future<Widget> _buildList(List<QueryDocumentSnapshot> data, status) async {
+    // Filter out exchanges with non-existing products
+    var filteredData = <QueryDocumentSnapshot>[];
+    for (var doc in data) {
+      var productSnapshot = await doc['productRef'].get();
+      if (productSnapshot.exists) {
+        filteredData.add(doc);
+      }
+    }
+    if (filteredData.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

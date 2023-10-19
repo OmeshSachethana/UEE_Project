@@ -20,12 +20,6 @@ class RecycledProductsList extends StatelessWidget {
             );
           }
 
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-
           return ListView.builder(
             itemCount: snapshot.data!.docs.length,
             itemBuilder: (BuildContext context, int index) {
@@ -39,27 +33,48 @@ class RecycledProductsList extends StatelessWidget {
                       ? data['imageUrl']
                       : 'https://example.com/default-image-url.png';
 
-              return InkWell(
+              return GestureDetector(
                 onTap: () {
+                  // Pass the context, product data, image URL, and assigned center to the detail page
+                  final nameController =
+                      TextEditingController(text: data['name']);
+                  final quantityController =
+                      TextEditingController(text: data['quantity'].toString());
+                  final assignedStatusController =
+                      TextEditingController(text: data['assigned_status']);
+                  final assignedCenterController =
+                      TextEditingController(text: data['assigned_center']);
+                  final assignedCenterMYController =
+                      TextEditingController(text: data['assigned_center']);
+                  final descriptionController =
+                      TextEditingController(text: data['description']);
+
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => RecycledProductDetailPage(
-                        productData:
-                            data, // Pass the product data to the detail page
+                      builder: (context) => RecycledProductDetailEditPage(
+                        productData: data,
+                        nameController: nameController,
+                        quantityController: quantityController,
+                        assignedStatusController: assignedStatusController,
+                        assignedCenterController: assignedCenterController,
+                        //-------------------------------------------------
+                        assignedCenterMYController: assignedCenterMYController,
+                        //-------------------------------------------------
+                        descriptionController: descriptionController,
+                        documentId: document.id,
+                        imageUrl: imageUrl,
+                        assignedCenterrController: assignedCenterMYController,
                       ),
                     ),
                   );
-                  // Add code to handle the tap action, e.g., navigate to a product detail page
-                  // Navigator.push(context, MaterialPageRoute(builder: (context) => ProductDetailPage(data)));
                 },
                 child: Card(
                   child: ListTile(
                     title: Text(data['name']),
                     subtitle: Text(
-                        'Quantity: ${data['quantity']}, ${data['assigned_status']}'),
+                        'Quantity: ${data['quantity']}, Assigned Status: ${data['assigned_status']}'),
                     leading: Image.network(imageUrl),
-                    // You can add more details here if needed
                   ),
                 ),
               );

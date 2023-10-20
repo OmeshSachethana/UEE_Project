@@ -230,6 +230,7 @@ class MyProductsPage extends StatelessWidget {
           ),
         ],
       ),
+      backgroundColor: Color.fromARGB(255, 218, 245, 209),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection('products')

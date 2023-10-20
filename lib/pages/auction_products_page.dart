@@ -68,20 +68,27 @@ class AuctionProductsPage extends StatelessWidget {
                     return Card(
                       elevation: 5,
                       margin: const EdgeInsets.all(10.0),
-                      child: ListTile(
-                        title: Text(data['name']),
-                        leading: Image.network(data['image']),
-                        trailing: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    ViewProductPage(document: document),
-                              ),
-                            );
-                          },
-                          child: Text('View Product'),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: <Widget>[
+                            Container(
+                                width: 130,
+                                height: 100,
+                                child: Image.network(data['image'])),
+                            Text(data['name']),
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        ViewProductPage(document: document),
+                                  ),
+                                );
+                              },
+                              child: Text('View Product'),
+                            ),
+                          ],
                         ),
                       ),
                     );

@@ -123,9 +123,11 @@ class AuctionProductsPage extends StatelessWidget {
                   );
                 }
 
-                return ListView.builder(
+                return GridView.builder(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2),
                   itemCount: snapshot.data!.docs.length,
                   itemBuilder: (BuildContext context, int index) {
                     DocumentSnapshot document = snapshot.data!.docs[index];
@@ -134,13 +136,15 @@ class AuctionProductsPage extends StatelessWidget {
 
                     return Card(
                       elevation: 5,
-                      margin: const EdgeInsets.symmetric(vertical: 10.0),
-                      child: ListTile(
-                        title: Text(data['name']),
-                        leading: Image.network(data['image']),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
+                      margin: const EdgeInsets.all(10.0),
+                      child: SingleChildScrollView(
+                        child: Column(
                           children: <Widget>[
+                            Container(
+                                width: 130,
+                                height: 100,
+                                child: Image.network(data['image'])),
+                            Text(data['name']),
                             ElevatedButton(
                               onPressed: () {
                                 Navigator.push(
@@ -153,7 +157,6 @@ class AuctionProductsPage extends StatelessWidget {
                               },
                               child: Text('View Product'),
                             ),
-                            SizedBox(width: 10),
                             ElevatedButton(
                               onPressed: () => _startTimer(document),
                               child: Text('Start Timer'),

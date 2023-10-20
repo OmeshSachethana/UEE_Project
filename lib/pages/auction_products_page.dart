@@ -85,7 +85,13 @@ class AuctionProductsPage extends StatelessWidget {
                                   width: 130,
                                   height: 100,
                                   child: Image.network(data['image'])),
-                              Text(data['name']),
+                              Text(
+                                data['name'],
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 16),
+                              ),
+                              Text('Rs. ${data['starting_price']}'),
+                              Text('Qty: ${data['quantity']}')
                             ],
                           ),
                         ),

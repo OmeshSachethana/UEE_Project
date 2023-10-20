@@ -139,22 +139,6 @@ class _ExchangesWidgetState extends State<ExchangesWidget> {
                 color: Colors.grey[900]),
           ),
         ),
-        if (status == 'Confirmed')
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              padding: const EdgeInsets.all(10.0),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.red), // Add this
-                borderRadius: BorderRadius.circular(5.0), // And this
-              ),
-              child: const Text(
-                'Once the exchange is completed, please click on the \'completed\' button to mark the exchange as completed.',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
         Expanded(
           child: ListView.separated(
             itemCount: data.length,
@@ -180,7 +164,6 @@ class _ExchangesWidgetState extends State<ExchangesWidget> {
                                 'Recipient: ${doc['recipientEmail']}\n'
                                 'Product: ${product['name']}\n'
                                 'Category: ${product['category']}\n'
-                                'Price: ${product['price']}\n'
                                 'Quantity: ${product['quantity']}\n'
                                 'Status: ${doc['status']}\n\n'
                                 '${DateFormat('dd-mm-yyyy').format(doc['timestamp'].toDate())}\n',
@@ -210,7 +193,7 @@ class _ExchangesWidgetState extends State<ExchangesWidget> {
                         children: <Widget>[
                           Text('Category: ${product['category'] ?? ''}\n',
                               style: const TextStyle(fontSize: 16)),
-                          Text('Price: ${product['price']}\nQuantity: '
+                          Text('Quantity: '
                               '${product['quantity']}'),
                         ],
                       ),
@@ -229,8 +212,7 @@ class _ExchangesWidgetState extends State<ExchangesWidget> {
                                 setState(() {});
                               },
                             ),
-                          if (product['price'] != null &&
-                              product['quantity'] != null)
+                          if (product['quantity'] != null)
                             if (status == 'Pending' &&
                                 doc['senderEmail'] != widget.loggedInUserEmail)
                               PopupMenuButton<String>(

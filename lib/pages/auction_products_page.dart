@@ -26,6 +26,7 @@ class AuctionProductsPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Auction Products'),
       ),
+      backgroundColor: Color.fromARGB(255, 218, 245, 209),
       body: SingleChildScrollView(
         child: Column(
           children: [

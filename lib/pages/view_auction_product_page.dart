@@ -187,11 +187,21 @@ class _ViewProductPageState extends State<ViewProductPage> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: <Widget>[
-              Image.network(data['image']),
-              Text('Category: ${data['category']}'),
-              Text('Quantity: ${data['quantity']}'),
-              Text('Description: ${data['description']}'),
-              Text('Price: ${data['starting_price']}'),
+              Container(
+                height: 450,
+                width: 400,
+                child: Card(
+                  child: Column(
+                    children: [
+                      Image.network(data['image']),
+                      Card(child: Text('Category: ${data['category']}')),
+                      Text('Quantity: ${data['quantity']}'),
+                      Text('Description: ${data['description']}'),
+                      Text('Price: ${data['starting_price']}'),
+                    ],
+                  ),
+                ),
+              ),
               const SizedBox(height: 20),
               if (!canPlaceBid)
                 const Text('You have already placed a bid on this product.'),

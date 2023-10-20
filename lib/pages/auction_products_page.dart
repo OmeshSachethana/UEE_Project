@@ -3,8 +3,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:new_app/pages/view_auction_product_page.dart';
 
-class AuctionProductsPage extends StatelessWidget {
+class AuctionProductsPage extends StatefulWidget {
+  @override
+  _AuctionProductsPageState createState() => _AuctionProductsPageState();
+}
+
+class _AuctionProductsPageState extends State<AuctionProductsPage> {
   final User? user = FirebaseAuth.instance.currentUser;
+  Map<String, bool> _hasStartedTimer = {};
 
   void _startTimer(DocumentSnapshot document) async {
     try {
@@ -14,6 +20,10 @@ class AuctionProductsPage extends StatelessWidget {
           .update({
         'timer_started': true,
         'created_at': FieldValue.serverTimestamp(),
+      });
+
+      setState(() {
+        _hasStartedTimer[document.id] = true;
       });
     } catch (e) {
       print('Failed to start timer: $e');
@@ -86,11 +96,7 @@ class AuctionProductsPage extends StatelessWidget {
                                   width: 130,
                                   height: 100,
                                   child: Image.network(data['image'])),
-                              Text(
-                                data['name'],
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 16),
-                              ),
+                              Text(data['name']),
                               Text('Rs. ${data['starting_price']}'),
                               Text('Qty: ${data['quantity']}')
                             ],
@@ -119,68 +125,71 @@ class AuctionProductsPage extends StatelessWidget {
                   AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasError) {
                   return Center(
-                    child: Text('Error: ${snapshot.error}'),
-                  );
+                      child: Text(
+                          'Error loading products from Firestore ${snapshot.error}'));
                 }
 
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(
-                    child: CircularProgressIndicator(),
-                  );
+                      child:
+                          CircularProgressIndicator()); // show a loading spinner while waiting for the products to load from Firestore.
                 }
 
                 return GridView.builder(
-                  shrinkWrap: true,
-                  physics:
-                      NeverScrollableScrollPhysics(), // to disable GridView's scrolling
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount:
-                          2), // a delegate that allows the caller to specify a number of cross-axis children for a layout that adjusts to fill the viewport in the main axis.
-                  itemCount: snapshot.data!.docs
-                      .length, // the number of products in the database.
-                  itemBuilder: (BuildContext context, int index) {
-                    // builder callback
-                    DocumentSnapshot document =
-                        snapshot.data!.docs[index]; // get document snapshot
-                    Map<String, dynamic> data =
-                        document.data() as Map<String, dynamic>; // get data
+                    shrinkWrap:
+                        true, // this makes the GridView take up only as much space as it needs.
+                    physics:
+                        NeverScrollableScrollPhysics(), // this disables scrolling within the GridView.
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount:
+                            2), // this makes the GridView display two columns of items on the screen.
+                    itemCount: snapshot.data!.docs
+                        .length, // the number of products in the database.
+                    itemBuilder: (BuildContext context, int index) {
+                      // builder callback
+                      DocumentSnapshot document =
+                          snapshot.data!.docs[index]; // get document snapshot
+                      Map<String, dynamic> data =
+                          document.data() as Map<String, dynamic>; // get data
 
-                    return InkWell(
-                      onTap: () {
-                        // handle tap events that occur within this widget.
-                        Navigator.push(
-                          // navigate to a new screen and/or back to the previous screen.
-                          context,
-                          MaterialPageRoute(
-                            // a modal route that replaces the entire screen with a platform-adaptive transition.
-                            builder: (context) => ViewProductPage(
-                                document:
-                                    document), // returns a new widget that will be pushed onto the Navigator stack.
-                          ),
-                        );
-                      },
-                      child: Card(
-                        elevation: 5,
-                        margin: const EdgeInsets.all(10.0),
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: <Widget>[
-                              Container(
-                                  width: 130,
-                                  height: 100,
-                                  child: Image.network(data['image'])),
-                              Text(data['name']),
-                              ElevatedButton(
-                                onPressed: () => _startTimer(document),
-                                child: Text('Start Timer'),
-                              ),
-                            ],
+                      return InkWell(
+                        onTap: () {
+                          // handle tap events that occur within this widget.
+                          Navigator.push(
+                            // navigate to a new screen and/or back to the previous screen.
+                            context,
+                            MaterialPageRoute(
+                              // a modal route that replaces the entire screen with a platform-adaptive transition.
+                              builder: (context) => ViewProductPage(
+                                  document:
+                                      document), // returns a new widget that will be pushed onto the Navigator stack.
+                            ),
+                          );
+                        },
+                        child: Card(
+                          elevation: 5,
+                          margin: const EdgeInsets.all(10.0),
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: <Widget>[
+                                Container(
+                                    width: 130,
+                                    height: 100,
+                                    child: Image.network(data['image'])),
+                                Text(data['name']),
+                                ElevatedButton(
+                                  onPressed:
+                                      _hasStartedTimer[document.id] == true
+                                          ? null
+                                          : () => _startTimer(document),
+                                  child: Text('Start Timer'),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    );
-                  },
-                );
+                      );
+                    });
               },
             ),
           ],

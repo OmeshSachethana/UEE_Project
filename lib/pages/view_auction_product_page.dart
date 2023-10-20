@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_paypal/flutter_paypal.dart';
 import 'dart:async';
 
 import '../components/timer.dart';
@@ -18,6 +19,7 @@ class _ViewProductPageState extends State<ViewProductPage> {
   final User? user = FirebaseAuth.instance.currentUser;
   final TextEditingController bidController = TextEditingController();
   bool canPlaceBid = true;
+  String highestBidderEmail = '';
 
   AuctionTimer auctionTimer =
       AuctionTimer(); // Create an instance of AuctionTimer
@@ -72,11 +74,13 @@ class _ViewProductPageState extends State<ViewProductPage> {
           .doc(widget.document.id)
           .collection('bids')
           .orderBy('bid_amount', descending: true)
-          .limit(3)
+          .limit(1)
           .get();
 
       setState(() {
         latestBids = snapshot.docs;
+        highestBidderEmail =
+            latestBids.isNotEmpty ? latestBids[0]['user_email'] : '';
       });
     } catch (e) {
       print('Failed to load latest bids: $e');
@@ -246,6 +250,69 @@ class _ViewProductPageState extends State<ViewProductPage> {
                 ),
               ),
               const SizedBox(height: 20),
+              if (user?.email == highestBidderEmail &&
+                  remainingTime.inSeconds <= 0)
+                TextButton(
+                  onPressed: () {
+                    // Calculate total amount
+                    double serviceCharge = 0.05; // 5% service charge
+                    double totalAmount = latestBids.isNotEmpty
+                        ? latestBids[0]['bid_amount'] * (1 + serviceCharge)
+                        : 0.0;
+                    String totalAmountStr = totalAmount.toStringAsFixed(
+                        2); // Convert totalAmount to string with 2 decimal places
+
+                    var transactions = [
+                      {
+                        "amount": {
+                          "total": totalAmountStr,
+                          "currency": "USD",
+                          "details": {
+                            "subtotal": totalAmountStr,
+                            "shipping": '0',
+                            "shipping_discount": 0
+                          }
+                        },
+                        "description": "The payment transaction description.",
+                        "item_list": {
+                          "items": [
+                            {
+                              "name": "User item ${data['name']}}",
+                              "quantity": 1,
+                              "price": totalAmountStr,
+                              "currency": "USD"
+                            }
+                          ],
+                        }
+                      }
+                    ];
+
+                    // Navigate to PayPal payment page
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => UsePaypal(
+                            sandboxMode: true,
+                            clientId: "AQnn6KdYQ7qb8AwBMK8B4LVnWau7tWmoj9XKe7V53RryuJowjeN7BLF8-JSfGCOJe1vpJu9fema6R8Qi",
+                            secretKey: "EGHi7FX1N2-yS-NwIi-4Ki1xZGrLQFCfF-zDHSEe5qfVb4YVGTbfsL5LlFZSCUdcldTyQvHrGdISwjNo",
+                            returnURL: "https://samplesite.com/return",
+                            cancelURL: "https://samplesite.com/cancel",
+                            transactions: transactions,
+                            note: "Contact us for any questions on your order.",
+                            onSuccess: (Map params) async {
+                              print("onSuccess: $params");
+                            },
+                            onError: (error) {
+                              print("onError: $error");
+                            },
+                            onCancel: (params) {
+                              print('cancelled: $params');
+                            }),
+                      ),
+                    );
+                  },
+                  child: const Text('Make Payment', style: TextStyle(fontSize: 20),),
+                ),
+                const SizedBox(height: 20),
               if (latestBids.isNotEmpty)
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

@@ -285,34 +285,37 @@ class MyProductsPage extends StatelessWidget {
                       Map<String, dynamic> data =
                           document.data() as Map<String, dynamic>;
 
-                      return Card(
-                        // Wrap ListTile with a Card
-                        child: ListTile(
-                          title: Text(data['name']),
-                          subtitle: Text(
-                              'Quantity: ${data['quantity']}, Price: ${data['price']}'), // Display quantity and price here
-                          leading: Image.network(
-                              data['image']), // Display image here
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                icon: Icon(Icons.edit),
-                                onPressed: () =>
-                                    _showEditDialog(context, document),
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.delete),
-                                onPressed: () =>
-                                    _showDeleteDialog(context, document),
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.recycling),
-                                onPressed: () =>
-                                    _showRecycleDialog(context, document),
-                              ),
-                            ],
-                          ), // Add other product details as needed
+                      return Container(
+                        height: 70,
+                        child: Card(
+                          // Wrap ListTile with a Card
+                          child: ListTile(
+                            title: Text(data['name']),
+                            subtitle: Text(
+                                'Quantity: ${data['quantity']}, Price: ${data['price']}'), // Display quantity and price here
+                            leading: Image.network(
+                                data['image']), // Display image here
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: Icon(Icons.edit),
+                                  onPressed: () =>
+                                      _showEditDialog(context, document),
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.delete),
+                                  onPressed: () =>
+                                      _showDeleteDialog(context, document),
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.recycling),
+                                  onPressed: () =>
+                                      _showRecycleDialog(context, document),
+                                ),
+                              ],
+                            ), // Add other product details as needed
+                          ),
                         ),
                       );
                     },

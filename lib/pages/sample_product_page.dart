@@ -24,7 +24,10 @@ class ProductPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 218, 245, 209),
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('products').snapshots(),
+        stream: FirebaseFirestore.instance
+            .collection('products')
+            .where('product_type', isNotEqualTo: 'auction') // Add this line
+            .snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) {
             return const Text('Something went wrong');

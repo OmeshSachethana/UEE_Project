@@ -22,6 +22,7 @@ class RecycledProductDetailEditPage extends StatelessWidget {
     required TextEditingController assignedCenterrController,
     required imageUrl,
     required TextEditingController assignedCenterController,
+    //required TextEditingController assignedCenterMYController,
   });
 
   Future<void> _updateProductDetails() async {
@@ -60,6 +61,32 @@ class RecycledProductDetailEditPage extends StatelessWidget {
       await launch(emailUrl.toString());
     } catch (e) {
       print('Error launching email: $e');
+    }
+  }
+
+  Future<void> _openMapsToFindRecycleCenter() async {
+    final recycleCenterName = assignedCenterMYController.text;
+
+    if (recycleCenterName.isEmpty) {
+      print('Please enter a recycle center name to search.');
+      return;
+    }
+
+    final query =
+        'Recycle Center $recycleCenterName'; // You can customize the query
+
+    // Construct the Google Maps URL with the search query
+    final mapsUrl = 'https://www.google.com/maps/search/?api=1&query=$query';
+    // https://maps.google.com/maps/@37.0625,-95.677068,4z
+
+    try {
+      if (await canLaunch(mapsUrl)) {
+        await launch(mapsUrl);
+      } else {
+        print('Could not launch $mapsUrl');
+      }
+    } catch (e) {
+      print('Error opening maps: $e');
     }
   }
 
@@ -154,7 +181,9 @@ class RecycledProductDetailEditPage extends StatelessWidget {
                   ),
                   ListTile(
                     title: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        _openMapsToFindRecycleCenter();
+                      },
                       child: Text('Find Recycle Center'),
                     ),
                   ),

@@ -163,6 +163,10 @@ class AuctionProductsPage extends StatelessWidget {
                                   height: 100,
                                   child: Image.network(data['image'])),
                               Text(data['name']),
+                              ElevatedButton(
+                                onPressed: () => _startTimer(document),
+                                child: Text('Start Timer'),
+                              ),
                             ],
                           ),
                         ),

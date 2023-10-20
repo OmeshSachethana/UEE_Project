@@ -181,6 +181,7 @@ class _ViewProductPageState extends State<ViewProductPage> {
       appBar: AppBar(
         title: Text(data['name']),
       ),
+      backgroundColor: Color.fromARGB(255, 218, 245, 209),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),

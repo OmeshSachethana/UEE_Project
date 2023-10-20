@@ -66,6 +66,7 @@ class _ExchangePageState extends State<ExchangePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromARGB(255, 218, 245, 209),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(

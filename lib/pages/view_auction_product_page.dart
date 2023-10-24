@@ -135,8 +135,14 @@ class _ViewProductPageState extends State<ViewProductPage> {
 
           // Check if new bid is higher than the current highest bid and the starting price
           if (newBid <= highestBidAmount || newBid < startingPrice) {
-            print(
-                "Your bid must be higher than the current highest bid and the starting price.");
+            QuickAlert.show(
+              context: context,
+              type: QuickAlertType.error,
+              title: 'Oops...',
+              text: 'Bid higher than the current highest amount',
+            );
+            // print(
+            //     "Your bid must be higher than the current highest bid and the starting price.");
             return;
           }
 

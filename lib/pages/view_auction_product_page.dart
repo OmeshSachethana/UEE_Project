@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_paypal/flutter_paypal.dart';
+import 'package:quickalert/quickalert.dart';
 import 'dart:async';
 
 import '../components/timer.dart';
@@ -98,7 +99,13 @@ class _ViewProductPageState extends State<ViewProductPage> {
     try {
       // Check if the timer is over
       if (remainingTime.inSeconds <= 0) {
-        print("The auction has ended. You cannot place a bid.");
+        QuickAlert.show(
+          context: context,
+          type: QuickAlertType.error,
+          title: 'Auction Ended',
+          text: 'You cannot place a bid',
+        );
+
         return;
       }
 
@@ -303,8 +310,10 @@ class _ViewProductPageState extends State<ViewProductPage> {
                       MaterialPageRoute(
                         builder: (BuildContext context) => UsePaypal(
                             sandboxMode: true,
-                            clientId: "AQnn6KdYQ7qb8AwBMK8B4LVnWau7tWmoj9XKe7V53RryuJowjeN7BLF8-JSfGCOJe1vpJu9fema6R8Qi",
-                            secretKey: "EGHi7FX1N2-yS-NwIi-4Ki1xZGrLQFCfF-zDHSEe5qfVb4YVGTbfsL5LlFZSCUdcldTyQvHrGdISwjNo",
+                            clientId:
+                                "AQnn6KdYQ7qb8AwBMK8B4LVnWau7tWmoj9XKe7V53RryuJowjeN7BLF8-JSfGCOJe1vpJu9fema6R8Qi",
+                            secretKey:
+                                "EGHi7FX1N2-yS-NwIi-4Ki1xZGrLQFCfF-zDHSEe5qfVb4YVGTbfsL5LlFZSCUdcldTyQvHrGdISwjNo",
                             returnURL: "https://samplesite.com/return",
                             cancelURL: "https://samplesite.com/cancel",
                             transactions: transactions,
@@ -321,9 +330,12 @@ class _ViewProductPageState extends State<ViewProductPage> {
                       ),
                     );
                   },
-                  child: const Text('Make Payment', style: TextStyle(fontSize: 20),),
+                  child: const Text(
+                    'Make Payment',
+                    style: TextStyle(fontSize: 20),
+                  ),
                 ),
-                const SizedBox(height: 20),
+              const SizedBox(height: 20),
               if (latestBids.isNotEmpty)
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

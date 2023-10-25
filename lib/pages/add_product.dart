@@ -124,6 +124,7 @@ class _AddProductPageState extends State<AddProductPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.grey[900],
         title: const Text('Add Product'),
       ),
       body: Padding(

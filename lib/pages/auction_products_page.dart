@@ -34,6 +34,7 @@ class _AuctionProductsPageState extends State<AuctionProductsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.grey[900],
         title: Text('Auction Products'),
       ),
       backgroundColor: Color.fromARGB(255, 218, 245, 209),

@@ -201,6 +201,7 @@ class _ViewProductPageState extends State<ViewProductPage> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.grey[900],
         title: Text(data['name']),
       ),
       backgroundColor: Color.fromARGB(255, 218, 245, 209),

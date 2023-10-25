@@ -76,9 +76,7 @@ class MyDrawer extends StatelessWidget {
             text: "M Y  P R O D U C T S",
             onTap: onProductTap),
         MyListTile(
-            icon: Icons.recycling,
-            text: "A U C T I O N S",
-            onTap: onAuctionTap),
+            icon: Icons.wallet, text: "A U C T I O N S", onTap: onAuctionTap),
         //Exchanges
         MyListTile(
             icon: Icons.swap_horiz,

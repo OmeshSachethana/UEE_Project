@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'add_product.dart'; // Import the AddProductPage
+import 'add_product.dart';
 
 class MyProductsPage extends StatelessWidget {
   final User user = FirebaseAuth.instance.currentUser!;
@@ -125,11 +125,10 @@ class MyProductsPage extends StatelessWidget {
     TextEditingController imageUrlController =
         TextEditingController(text: data['image']);
 
-    // Add these two TextEditingController objects
     TextEditingController assignedCenterController =
         TextEditingController(text: null);
     TextEditingController assignedStatusController =
-        TextEditingController(text: "Unassigned"); // Set the default value
+        TextEditingController(text: "Unassigned");
 
     showDialog(
       context: context,
@@ -161,7 +160,6 @@ class MyProductsPage extends StatelessWidget {
                   controller: imageUrlController,
                   decoration: InputDecoration(labelText: 'Image URL'),
                 ),
-                // Add fields for assigned_center and assigned_status
                 TextField(
                   controller: assignedCenterController,
                   decoration: InputDecoration(labelText: 'Assigned Center'),
@@ -190,11 +188,9 @@ class MyProductsPage extends StatelessWidget {
                     'price': double.parse(priceController.text),
                     'description': descriptionController.text,
                     'imageUrl': imageUrlController.text,
-                    // Add the new fields and set their default values
                     'assigned_center': assignedCenterController.text,
                     'assigned_status': assignedStatusController.text,
                   });
-                  // Delete the product from the "products" collection
                   await FirebaseFirestore.instance
                       .collection('products')
                       .doc(document.id)
@@ -211,24 +207,11 @@ class MyProductsPage extends StatelessWidget {
     );
   }
 
-  //-----------------------------------------------------------------------
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('My Products'),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => AddProductPage()),
-              );
-            },
-          ),
-        ],
       ),
       backgroundColor: Color.fromARGB(255, 218, 245, 209),
       body: StreamBuilder(
@@ -288,13 +271,11 @@ class MyProductsPage extends StatelessWidget {
                       return Container(
                         height: 70,
                         child: Card(
-                          // Wrap ListTile with a Card
                           child: ListTile(
                             title: Text(data['name']),
                             subtitle: Text(
-                                'Quantity: ${data['quantity']}, Price: ${data['price']}'), // Display quantity and price here
-                            leading: Image.network(
-                                data['image']), // Display image here
+                                'Quantity: ${data['quantity']}, Price: ${data['price']}'),
+                            leading: Image.network(data['image']),
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -314,7 +295,7 @@ class MyProductsPage extends StatelessWidget {
                                       _showRecycleDialog(context, document),
                                 ),
                               ],
-                            ), // Add other product details as needed
+                            ),
                           ),
                         ),
                       );
@@ -325,6 +306,15 @@ class MyProductsPage extends StatelessWidget {
             },
           );
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AddProductPage()),
+          );
+        },
+        child: Icon(Icons.add),
       ),
     );
   }

@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:quickalert/quickalert.dart';
 import 'dart:io';
 
 class AddProductPage extends StatefulWidget {
@@ -85,6 +86,13 @@ class _AddProductPageState extends State<AddProductPage> {
       setState(() {
         _imageUrl = null;
       });
+
+      // Show success alert here
+      QuickAlert.show(
+        context: context,
+        type: QuickAlertType.success,
+        text: 'Product Added Successfully!',
+      );
     } catch (e) {
       print('Failed to add product: $e');
     }

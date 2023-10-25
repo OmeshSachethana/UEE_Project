@@ -141,8 +141,6 @@ class _ViewProductPageState extends State<ViewProductPage> {
               title: 'Oops...',
               text: 'Bid higher than the current highest amount',
             );
-            // print(
-            //     "Your bid must be higher than the current highest bid and the starting price.");
             return;
           }
 
@@ -159,6 +157,13 @@ class _ViewProductPageState extends State<ViewProductPage> {
           setState(() {
             canPlaceBid = false;
           });
+
+          // Show success alert
+          QuickAlert.show(
+            context: context,
+            type: QuickAlertType.success,
+            text: 'Bid Added Successfully!',
+          );
         }
       }
     } catch (e) {

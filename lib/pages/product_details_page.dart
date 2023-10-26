@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'test_message.dart';
 import 'exchange/escrow_process.dart';
@@ -63,10 +64,18 @@ class _ExchangePageState extends State<ExchangePage> {
     );
   }
 
+  Future<String> getProductType() async {
+    final doc = await FirebaseFirestore.instance
+        .collection('products')
+        .doc(widget.productId)
+        .get();
+    return doc['product_type'];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 218, 245, 209),
+      backgroundColor: const Color.fromARGB(255, 218, 245, 209),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -91,15 +100,30 @@ class _ExchangePageState extends State<ExchangePage> {
                 },
                 child: const Text('Message Seller'),
               ),
-            if (widget.opEmail != widget.loggedInUserEmail)
-              ElevatedButton(
-                onPressed: () {
-                  _navigateToExchangeWidget(context);
-                },
-                child: const Text('Exchange Items'),
-              ),
-            SizedBox(height: 16.0),
-            Divider(),
+            FutureBuilder<String>(
+              future: getProductType(),
+              builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                if (snapshot.hasData) {
+                  if (snapshot.data == "normal" &&
+                      widget.opEmail != widget.loggedInUserEmail) {
+                    return ElevatedButton(
+                      onPressed: () {
+                        _navigateToExchangeWidget(context);
+                      },
+                      child: const Text('Exchange Items'),
+                    );
+                  } else {
+                    return Container(); // Render an empty container when product type is not "normal"
+                  }
+                } else if (snapshot.hasError) {
+                  return Text("Error: ${snapshot.error}");
+                }
+                // By default, show a loading spinner.
+                return const CircularProgressIndicator();
+              },
+            ),
+            const SizedBox(height: 16.0),
+            const Divider(),
           ],
         ),
       ),

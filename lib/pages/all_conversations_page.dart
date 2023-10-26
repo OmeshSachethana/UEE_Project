@@ -52,11 +52,11 @@ class _ConversationsPageState extends State<ConversationsPage> {
 
     // Mark each sent message as deleted by the sender
     sentMessages.docs
-        .forEach((doc) => batch.update(doc.reference, {'senderDeleted': true}));
+        .forEach((doc) => batch.update(doc.reference, {'senderDeleted': true, 'isRead': true}));
 
     // Mark each received message as deleted by the receiver
     receivedMessages.docs.forEach(
-        (doc) => batch.update(doc.reference, {'receiverDeleted': true}));
+        (doc) => batch.update(doc.reference, {'receiverDeleted': true, 'isRead': true}));
 
     // Commit the batch
     await batch.commit();
@@ -65,6 +65,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 218, 245, 209),
       appBar: AppBar(
         title: const Text('Messages'),
         backgroundColor: Colors.grey[900],

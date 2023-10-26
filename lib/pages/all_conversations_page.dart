@@ -65,6 +65,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 218, 245, 209),
       appBar: AppBar(
         title: const Text('Messages'),
         backgroundColor: Colors.grey[900],

@@ -12,6 +12,7 @@ class ExchangesScreen extends StatelessWidget {
     final loggedInUserEmail = FirebaseAuth.instance.currentUser?.email ?? '';
 
     return Scaffold(
+      backgroundColor: Color.fromARGB(255, 218, 245, 209),
       appBar: AppBar(
         backgroundColor: Colors.transparent, // Make AppBar transparent
         elevation: 0, // Remove shadow

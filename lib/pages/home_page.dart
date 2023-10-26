@@ -128,8 +128,8 @@ class HomePage extends StatelessWidget {
                     onPressed: () => Scaffold.of(context).openDrawer(),
                   ),
                   Positioned(
-                    right: 11,
-                    top: 11,
+                    right: 18,
+                    top: 12,
                     child: Container(
                       padding: const EdgeInsets.all(2),
                       decoration: BoxDecoration(
@@ -137,16 +137,8 @@ class HomePage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(6),
                       ),
                       constraints: const BoxConstraints(
-                        minWidth: 14,
-                        minHeight: 14,
-                      ),
-                      child: const Text(
-                        '1',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 8,
-                        ),
-                        textAlign: TextAlign.center,
+                        minWidth: 10,
+                        minHeight: 10,
                       ),
                     ),
                   )

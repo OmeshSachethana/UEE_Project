@@ -111,7 +111,7 @@ class MyProductsPage extends StatelessWidget {
       },
     );
   }
-
+/*
   void _showRecycleDialog(BuildContext context, DocumentSnapshot document) {
     Map<String, dynamic> data = document.data() as Map<String, dynamic>;
     TextEditingController titleController =
@@ -199,6 +199,83 @@ class MyProductsPage extends StatelessWidget {
                       .collection('products')
                       .doc(document.id)
                       .delete();
+                  Navigator.of(context).pop();
+                } catch (e) {
+                  print('Failed to recycle product: $e');
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }*/
+
+  void _showRecycleDialog(BuildContext context, DocumentSnapshot document) {
+    Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+    TextEditingController titleController =
+        TextEditingController(text: data['name']);
+    TextEditingController quantityController =
+        TextEditingController(text: data['quantity'].toString());
+    TextEditingController priceController =
+        TextEditingController(text: data['price'].toString());
+    TextEditingController descriptionController =
+        TextEditingController(text: data['description']);
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Recycle Product'),
+          content: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                TextField(
+                  controller: titleController,
+                  decoration: InputDecoration(labelText: 'Name'),
+                ),
+                TextField(
+                  controller: quantityController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(labelText: 'Quantity'),
+                ),
+                TextField(
+                  controller: priceController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(labelText: 'Price'),
+                ),
+                TextField(
+                  controller: descriptionController,
+                  decoration: InputDecoration(labelText: 'Description'),
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Recycle'),
+              onPressed: () async {
+                try {
+                  // Add the data to the "recycle" collection
+                  await FirebaseFirestore.instance.collection('recycle').add({
+                    'name': titleController.text,
+                    'quantity': int.parse(quantityController.text),
+                    'price': double.parse(priceController.text),
+                    'description': descriptionController.text,
+                  });
+
+                  // Delete the product from the "products" collection
+                  await FirebaseFirestore.instance
+                      .collection('products')
+                      .doc(document.id)
+                      .delete();
+
                   Navigator.of(context).pop();
                 } catch (e) {
                   print('Failed to recycle product: $e');

@@ -11,6 +11,9 @@ class MyDrawer extends StatelessWidget {
   final void Function()? onProductTap;
   final void Function()? onExchangeTap;
   final void Function()? onLanguageTap;
+  final void Function()? onRecycleCenterTap;
+  final void Function()? onAuctionTap;
+  final void Function()? onRecyclProductTap;
 
   const MyDrawer({
     super.key,
@@ -20,6 +23,9 @@ class MyDrawer extends StatelessWidget {
     required this.onProductTap,
     required this.onExchangeTap,
     required this.onLanguageTap,
+    required this.onRecycleCenterTap,
+    required this.onRecyclProductTap,
+    required this.onAuctionTap
   });
 
   Future<int> countUnreadConversations() async {
@@ -31,15 +37,12 @@ class MyDrawer extends StatelessWidget {
           .where('recipient', isEqualTo: user.email)
           .get();
 
-      // Create a set to store unique senders
       final senders = <String>{};
 
-      // Add each sender to the set
       for (var doc in querySnapshot.docs) {
         senders.add((doc.data() as Map<String, dynamic>)['sender']);
       }
 
-      // Return the count of unique senders
       return senders.length;
     } else {
       return 0;
@@ -50,64 +53,73 @@ class MyDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       backgroundColor: Colors.grey[900],
-      child: Column(children: [
-        const DrawerHeader(
-          child: Icon(
-            Icons.person,
-            color: Colors.white,
-            size: 64,
+      child: SingleChildScrollView(
+        child: Column(children: [
+          const DrawerHeader(
+            child: Icon(
+              Icons.person,
+              color: Colors.white,
+              size: 64,
+            ),
           ),
-        ),
-        MyListTile(
-          icon: Icons.home,
-          text: 'D-Home'.tr,
-          onTap: () => Navigator.pop(context),
-        ),
-
-        //profile
-        MyListTile(
+          MyListTile(
+            icon: Icons.home,
+            text: 'D-Home'.tr,
+            onTap: () => Navigator.pop(context),
+          ),
+          MyListTile(
             icon: Icons.person, text: "D-Profile".tr, onTap: onProfileTap),
 
-        //PRODUCTS
-        MyListTile(
+          MyListTile(
             icon: Icons.article,
             text: "D-MyProduct".tr,
-            onTap: onProductTap),
-        MyListTile(
+            onTap: onProductTap,
+          ),
+          MyListTile(
             icon: Icons.recycling,
             text: "A U C T I O N S",
-            onTap: onAuctionTap),
-        //Exchanges
-        MyListTile(
+            onTap: onAuctionTap,
+          ),
+          MyListTile(
             icon: Icons.swap_horiz,
             text: "D-Exchanges".tr,
-            onTap: onExchangeTap),
-
-        MyListTile(
-            icon: Icons.swap_horiz,
+            onTap: onExchangeTap,
+          ),
+          MyListTile(
+            icon: Icons.language_rounded,
             text: "D-Language".tr,
-            onTap:  onLanguageTap),
-
-        //messages
-        FutureBuilder<int>(
-          future: countUnreadConversations(),
-          builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
-            if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            } else {
-              return MyListTile(
-                icon: Icons.message,
-                text: "D-Messages".tr,
-                onTap: onMessageTap,
-                unreadCount: snapshot.data,
-              );
-            }
-          },
-        ),
-
-        MyListTile(
-            icon: Icons.logout, text: "D-logout".tr, onTap: onSignoutTap),
-      ]),
+            onTap:  onLanguageTap,
+          ),
+          FutureBuilder<int>(
+            future: countUnreadConversations(),
+            builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+              if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else {
+                return MyListTile(
+                  icon: Icons.message,
+                  text: "D-Messages".tr,
+                  onTap: onMessageTap,
+                  unreadCount: snapshot.data,
+                );
+              }
+            },
+          ),
+          MyListTile(
+            icon: Icons.recycling,
+            text: "R E C Y C L E   C E N T E R",
+            onTap: onRecycleCenterTap,
+          ),
+          MyListTile(
+            icon: Icons.recycling_sharp,
+            text: "R E C Y C L E   P R O D U C T",
+            onTap: onRecyclProductTap,
+          ),
+          MyListTile(
+            icon: Icons.logout, text: "D-logout".tr, onTap: onSignoutTap,
+          ),
+        ]),
+      ),
     );
   }
 }

@@ -51,6 +51,8 @@ dependencies:
   quickalert: ^1.0.2
   carousel_slider: ^4.2.1
   flutter_rating_bar: ^4.0.1
+  flutter_paypal: ^0.2.0
+  url_launcher: ^6.2.1
   
   
 dev_dependencies:

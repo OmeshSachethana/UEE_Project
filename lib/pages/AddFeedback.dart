@@ -47,7 +47,7 @@ class _AddFeedbackState extends State<AddFeedback> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 28, 122, 47),
+        backgroundColor: Colors.black,
         centerTitle: true,
         title: Text(
           'addfeedback'.tr,
@@ -55,7 +55,7 @@ class _AddFeedbackState extends State<AddFeedback> {
         ),
       ),
       body: Container(
-        color: Colors.green[100],
+        color: Colors.white,
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 20).copyWith(top: 20, bottom: 200),
           child: Column(
@@ -165,7 +165,7 @@ class _AddFeedbackState extends State<AddFeedback> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  color: Color.fromARGB(255, 28, 122, 47),
+                  color: Colors.black,
                   child: showProgressIndicator
                       ? CircularProgressIndicator(
                           color: Colors.white,

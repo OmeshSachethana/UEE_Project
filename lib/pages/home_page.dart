@@ -115,7 +115,7 @@ class HomePage extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => AddFeedback(productId: '',),
+        builder: (context) =>  ExchangesScreen(),
       ),
     );
   }
@@ -127,7 +127,7 @@ class HomePage extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>  FeedbackList(productId: '',),
+        builder: (context) =>  const ConversationsPage(),
       ),
     );
   }
@@ -137,6 +137,7 @@ class HomePage extends StatelessWidget {
     Navigator.pop(context);
 
     builddialog(context);
+  }
   void goToRecyclesPage(BuildContext context) {
     // Pop the menu drawer
     Navigator.pop(context);
@@ -238,3 +239,5 @@ class HomePage extends StatelessWidget {
     );
   }
 }
+
+

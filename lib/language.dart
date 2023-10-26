@@ -29,7 +29,21 @@ class Language extends Translations{
       'D-Exchanges':'E X C H A N G E S',
       'D-Language':'S E L E C T  L A N G U A G E',
       'D-Messages':'M E S S A G E S',
-      'D-logout':'L O G O U T'
+      'D-logout':'L O G O U T',
+      'producttype':'Product Type:',
+      'normal':'Normal',
+      'auction':'Auction',
+      'scategory':'Category',
+      'startingprice':'Starting Price',
+      'timerm':'Timer (minutes)',
+      'timers': 'Timer (seconds)',
+      'messages':'Messages',
+      'conError':'Error loading conversations',
+      'conSuccess':'Start a conversation with a seller',
+      'auctionp': 'Auction Products',
+      'auctionon':'Ongoing Auctions',
+      'myauction':'My Auctions',
+      'stimer':'Start Timer'
 
     },
     'sin':{
@@ -57,7 +71,21 @@ class Language extends Translations{
       'D-Exchanges':'හුවමාරු',
       'D-Language':'භාෂාවක් තෝරන්න',
       'D-Messages':'පණිවිඩ',
-      'D-logout':'පිටවීම'
+      'D-logout':'පිටවීම',
+      'producttype':'නිෂ්පාදන වර්ගය:',
+      'normal':'සාමාන්යයි',
+      'auction':'වෙන්දේසිය',
+      'scategory':'වර්ගය',
+      'startingprice':'ආරම්භක මිල',
+      'timerm':'ටයිමරය (මිනිත්තු)',
+      'timers': 'ටයිමරය (තත්පර)',
+      'messages':'පණිවිඩ',
+      'conError':'සංවාද පූරණය කිරීමේ දෝෂයකි',
+      'conSuccess':'විකුණුම්කරුවෙකු සමඟ සංවාදයක් ආරම්භ කරන්න',
+      'auctionp': 'වෙන්දේසි නිෂ්පාදන',
+      'auctionon':'දැනට පවතින වෙන්දේසි',
+      'myauction':'මගේ වෙන්දේසි',
+      'stimer':'ටයිමර් ආරම්භ කරන්න'
     }
   };
 }

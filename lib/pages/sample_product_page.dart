@@ -48,8 +48,17 @@ class ProductPage extends StatelessWidget {
     );
   }
 
-  Widget _buildCategory(String image, int color) {
-    return CircleAvatar(
+  Widget _buildCategory(BuildContext context,String image, int color, String productType) {
+  return GestureDetector(
+    onTap: () {
+      // Navigate to ProductsView with the selected product type
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => ProductsView(productType: productType),
+        ),
+      );
+    },
+    child: CircleAvatar(
       maxRadius: 37,
       backgroundColor: Color(color),
       child: Container(
@@ -60,8 +69,10 @@ class ProductPage extends StatelessWidget {
           image: AssetImage("lib/images/$image"),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   final String loggedInUserEmail;
 
@@ -113,11 +124,11 @@ class ProductPage extends StatelessWidget {
                 height: 60,
                 child: Row(
                   children: <Widget>[
-                    _buildCategory("shirtCat.webp", 0xffDB76E4),
-                    _buildCategory("trousers.png", 0xff5CC9EB),
-                    _buildCategory("Watch.png", 0xff5BE5A3),
-                    _buildCategory("ShoeCat.png", 0xffEB8181),
-                    _buildCategory("TieCat.png", 0xffD3CD4C),
+                    _buildCategory(context ,"shirtCat.webp", 0xffDB76E4,'Shirt'),
+                    _buildCategory(context ,"trousers.png", 0xff5CC9EB, 'Trousers'),
+                    _buildCategory(context ,"Watch.png", 0xff5BE5A3 ,'Watches'),
+                    _buildCategory(context ,"ShoeCat.png", 0xffEB8181,'Shoes'),
+                    _buildCategory(context ,"TieCat.png", 0xffD3CD4C,"Ties"),
                   ],
                 ),
               ),
@@ -138,7 +149,7 @@ class ProductPage extends StatelessWidget {
                           onTap: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => ProductsView(),
+                                builder: (context) => ProductsView(productType: 'all'),
                               ),
                             );
                           },

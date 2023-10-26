@@ -25,11 +25,11 @@ class _FeedbackListState extends State<FeedbackList> {
           )
           );
         },
-        backgroundColor: Color.fromARGB(255, 28, 122, 47),
+        backgroundColor: Colors.black,
         child: Icon(Icons.add),
       ),
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 28, 122, 47),
+        backgroundColor: Colors.black,
         centerTitle: true,
         title: Text(
           'listfeedback'.tr,
@@ -37,7 +37,7 @@ class _FeedbackListState extends State<FeedbackList> {
         ),
       ),
       body: Container(
-        color: Colors.green[100],
+        color: Colors.white,
         child: StreamBuilder(
           stream: FirebaseFirestore.instance
               .collection('feedbacks')

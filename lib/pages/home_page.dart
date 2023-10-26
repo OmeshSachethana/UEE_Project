@@ -7,9 +7,13 @@ import 'package:new_app/pages/AddFeedback.dart';
 import 'package:new_app/pages/FeedbackList.dart';
 import 'package:new_app/pages/my_products_page.dart';
 import 'package:new_app/pages/profile_page.dart';
+import 'package:new_app/pages/recycle_center.dart';
+import 'package:new_app/pages/recycle_product.dart';
 import 'package:new_app/pages/sample_product_page.dart';
 import 'package:new_app/pages/all_conversations_page.dart';
 import 'package:new_app/pages/exchange/exchanges_screen.dart';
+import '../components/notifications.dart';
+import 'auction_products_page.dart';
 
 
 class HomePage extends StatelessWidget {
@@ -92,6 +96,18 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  void goToAuctionPage(BuildContext context) {
+    // Pop the menu drawer
+    Navigator.pop(context);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AuctionProductsPage(),
+      ),
+    );
+  }
+
   void goToExchangesPage(BuildContext context) {
     // Pop the menu drawer
     Navigator.pop(context);
@@ -121,6 +137,28 @@ class HomePage extends StatelessWidget {
     Navigator.pop(context);
 
     builddialog(context);
+  void goToRecyclesPage(BuildContext context) {
+    // Pop the menu drawer
+    Navigator.pop(context);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const RecycleCenter(),
+      ),
+    );
+  }
+
+  void goToRecyclesProductPage(BuildContext context) {
+    // Pop the menu drawer
+    Navigator.pop(context);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RecycledProductsList(context),
+      ),
+    );
   }
 
   @override
@@ -178,24 +216,7 @@ class HomePage extends StatelessWidget {
           },
         ),
         actions: [
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.notifications),
-            offset: const Offset(0, 50),
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-              const PopupMenuItem<String>(
-                value: 'Notification 1',
-                child: Text('Notification 1'),
-              ),
-              const PopupMenuItem<String>(
-                value: 'Notification 2',
-                child: Text('Notification 2'),
-              ),
-              // Add more notifications here
-            ],
-            onSelected: (String value) {
-              // Handle your notification selection here
-            },
-          ),
+          buildNotificationsButton(),
           IconButton(
             onPressed: () => signUserOut(context),
             icon: const Icon(Icons.logout),
@@ -209,6 +230,9 @@ class HomePage extends StatelessWidget {
         onProductTap: () => goToProductsPage(context),
         onExchangeTap: () => goToExchangesPage(context),
         onLanguageTap: () => goToLanguageDialog(context),
+        onRecycleCenterTap: () => goToRecyclesPage(context),
+        onAuctionTap: () => goToAuctionPage(context),
+        onRecyclProductTap: () => goToRecyclesProductPage(context),
       ),
       body: ProductPage(loggedInUserEmail: user.email!), // Pass it here
     );

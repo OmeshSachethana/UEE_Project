@@ -7,8 +7,10 @@ import 'exchange_dialog.dart';
 
 class ExchangesWidget extends StatefulWidget {
   final String loggedInUserEmail;
+  final int initialIndex;
 
-  const ExchangesWidget({Key? key, required this.loggedInUserEmail})
+  const ExchangesWidget(
+      {Key? key, required this.loggedInUserEmail, required this.initialIndex})
       : super(key: key);
 
   @override
@@ -17,6 +19,13 @@ class ExchangesWidget extends StatefulWidget {
 
 class _ExchangesWidgetState extends State<ExchangesWidget> {
   int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.initialIndex;
+  }
+
   static const List<String> _statusOptions = [
     'Pending',
     'Confirmed',
@@ -68,7 +77,26 @@ class _ExchangesWidgetState extends State<ExchangesWidget> {
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
-          return _buildList(snapshot.data!, status);
+          return FutureBuilder<List<DocumentSnapshot>>(
+            future: Future.wait(
+                snapshot.data!.map((doc) => doc['productRef'].get())),
+            builder: (BuildContext context,
+                AsyncSnapshot<List<DocumentSnapshot>> productSnapshots) {
+              if (productSnapshots.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator();
+              } else if (productSnapshots.hasError) {
+                return Text('Error: ${productSnapshots.error}');
+              } else {
+                var validData = <QueryDocumentSnapshot>[];
+                for (var i = 0; i < productSnapshots.data!.length; i++) {
+                  if (productSnapshots.data![i].exists) {
+                    validData.add(snapshot.data![i]);
+                  }
+                }
+                return _buildList(validData, status);
+              }
+            },
+          );
         }
       },
     );
@@ -99,121 +127,164 @@ class _ExchangesWidgetState extends State<ExchangesWidget> {
       );
     }
 
-    return Container(
-      child: Column(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              '$status Exchanges',
-              style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey[900]),
-            ),
+    return Column(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            '$status Exchanges',
+            style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey[900]),
           ),
-          Expanded(
-            child: ListView.separated(
-              itemCount: data.length,
-              separatorBuilder: (BuildContext context, int index) =>
-                  const Divider(),
-              itemBuilder: (BuildContext context, int index) {
-                var doc = data[index];
-                return FutureBuilder<DocumentSnapshot>(
-                  future: doc['productRef'].get(),
-                  builder: (BuildContext context,
-                      AsyncSnapshot<DocumentSnapshot> productSnapshot) {
-                    if (!productSnapshot.hasData) {
-                      return const SizedBox.shrink();
-                    }
-                    var product = productSnapshot.data!;
-                    return GestureDetector(
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return ExchangeDialog(
-                              exchangeDetails: 'Sender: ${doc['senderEmail']}\n'
-                                  'Recipient: ${doc['recipientEmail']}\n'
-                                  'Product: ${product['name']}\n'
-                                  'Category: ${product['category']}\n'
-                                  'Price: ${product['price']}\n'
-                                  'Quantity: ${product['quantity']}\n'
-                                  'Status: ${doc['status']}\n\n'
-                                  '${DateFormat('dd-mm-yyyy').format(doc['timestamp'].toDate())}\n',
-                              imageUrl:
-                                  doc['senderEmail'] == widget.loggedInUserEmail
-                                      ? product['image']
-                                      : doc['item'],
-                            );
-                          },
-                        );
-                      },
-                      child: ListTile(
-                        contentPadding: const EdgeInsets.all(16.0),
-                        leading: doc['senderEmail'] == widget.loggedInUserEmail
-                            ? (product['image'] != null
-                                ? Image.network(product['image'],
-                                    width: 100, height: 100)
-                                : null)
-                            : (doc['item'] != null
-                                ? Image.network(doc['item'],
-                                    width: 100, height: 100)
-                                : null),
-                        title: Text(product['name'] ?? '',
-                            style: const TextStyle(fontSize: 20)),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text('Category:${product['category'] ?? ''}\n',
-                                style: const TextStyle(fontSize: 16)),
-                            Text('Price:${product['price']}\nQuantity:'
-                                '${product['quantity']}'),
-                          ],
-                        ),
-                        trailing: product['price'] != null &&
-                                product['quantity'] != null &&
-                                doc['senderEmail'] != widget.loggedInUserEmail
-                            ? Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  ElevatedButton(
-                                    onPressed: () async {
-                                      await FirebaseFirestore.instance
-                                          .collection('exchanges')
-                                          .doc(doc.id)
-                                          .update({
-                                        'status': doc['status'] == 'Confirmed'
-                                            ? 'Rejected'
-                                            : 'Confirmed',
-                                        'timestamp': Timestamp.now(),
-                                      });
-                                      setState(() {});
-                                    },
-                                    style: ButtonStyle(
-                                      backgroundColor:
-                                          MaterialStateProperty.all<Color>(
-                                              doc['status'] == 'Confirmed'
-                                                  ? const Color.fromARGB(
-                                                      255, 255, 100, 88)
-                                                  : Colors.blue),
-                                    ),
-                                    child: Text(doc['status'] == 'Confirmed'
-                                        ? 'Reject'
-                                        : 'Confirm'),
+        ),
+        Expanded(
+          child: ListView.separated(
+            itemCount: data.length,
+            separatorBuilder: (BuildContext context, int index) =>
+                const Divider(),
+            itemBuilder: (BuildContext context, int index) {
+              var doc = data[index];
+              return FutureBuilder<DocumentSnapshot>(
+                future: doc['productRef'].get(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<DocumentSnapshot> productSnapshot) {
+                  if (!productSnapshot.hasData) {
+                    return const SizedBox.shrink();
+                  }
+                  var product = productSnapshot.data!;
+                  return GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return ExchangeDialog(
+                            exchangeDetails: 'Sender: ${doc['senderEmail']}\n'
+                                'Recipient: ${doc['recipientEmail']}\n'
+                                'Product: ${product['name']}\n'
+                                'Category: ${product['category']}\n'
+                                'Quantity: ${product['quantity']}\n'
+                                'Status: ${doc['status']}\n\n'
+                                '${DateFormat('dd-mm-yyyy').format(doc['timestamp'].toDate())}\n',
+                            imageUrl:
+                                doc['senderEmail'] == widget.loggedInUserEmail
+                                    ? product['image']
+                                    : doc['item'],
+                          );
+                        },
+                      );
+                    },
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.all(16.0),
+                      leading: doc['senderEmail'] == widget.loggedInUserEmail
+                          ? (product['image'] != null
+                              ? Image.network(product['image'],
+                                  width: 100, height: 100)
+                              : null)
+                          : (doc['item'] != null
+                              ? Image.network(doc['item'],
+                                  width: 100, height: 100)
+                              : null),
+                      title: Text(product['name'] ?? '',
+                          style: const TextStyle(fontSize: 20)),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text('Category: ${product['category'] ?? ''}\n',
+                              style: const TextStyle(fontSize: 16)),
+                          Text('Quantity: '
+                              '${product['quantity']}'),
+                        ],
+                      ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          if (doc['senderEmail'] == widget.loggedInUserEmail &&
+                              status == 'Pending')
+                            IconButton(
+                              icon: const Icon(Icons.delete),
+                              onPressed: () async {
+                                await FirebaseFirestore.instance
+                                    .collection('exchanges')
+                                    .doc(doc.id)
+                                    .delete();
+                                setState(() {});
+                              },
+                            ),
+                          if (product['quantity'] != null)
+                            if (status == 'Pending' &&
+                                doc['senderEmail'] != widget.loggedInUserEmail)
+                              PopupMenuButton<String>(
+                                onSelected: (String result) async {
+                                  if (result == 'Confirm') {
+                                    await FirebaseFirestore.instance
+                                        .collection('exchanges')
+                                        .doc(doc.id)
+                                        .update({
+                                      'status': 'Confirmed',
+                                      'timestamp': Timestamp.now(),
+                                    });
+                                  } else if (result == 'Reject') {
+                                    await FirebaseFirestore.instance
+                                        .collection('exchanges')
+                                        .doc(doc.id)
+                                        .update({
+                                      'status': 'Rejected',
+                                      'timestamp': Timestamp.now(),
+                                    });
+                                  }
+                                  setState(() {});
+                                },
+                                itemBuilder: (BuildContext context) =>
+                                    <PopupMenuEntry<String>>[
+                                  const PopupMenuItem<String>(
+                                    value: 'Confirm',
+                                    child: Text('Confirm'),
+                                  ),
+                                  const PopupMenuItem<String>(
+                                    value: 'Reject',
+                                    child: Text('Reject'),
                                   ),
                                 ],
                               )
-                            : null,
+                            else if (doc['senderEmail'] !=
+                                widget.loggedInUserEmail)
+                              ElevatedButton(
+                                onPressed: () async {
+                                  await FirebaseFirestore.instance
+                                      .collection('exchanges')
+                                      .doc(doc.id)
+                                      .update({
+                                    'status': doc['status'] == 'Confirmed'
+                                        ? 'Rejected'
+                                        : 'Confirmed',
+                                    'timestamp': Timestamp.now(),
+                                  });
+                                  setState(() {});
+                                },
+                                style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                          doc['status'] == 'Confirmed'
+                                              ? const Color.fromARGB(
+                                                  255, 255, 100, 88)
+                                              : Colors.blue),
+                                ),
+                                child: Text(doc['status'] == 'Confirmed'
+                                    ? 'Reject'
+                                    : 'Confirm'),
+                              ),
+                        ],
                       ),
-                    );
-                  },
-                );
-              },
-            ),
+                    ),
+                  );
+                },
+              );
+            },
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
 
 import 'test_message.dart';
 
@@ -67,7 +68,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 218, 245, 209),
       appBar: AppBar(
-        title: const Text('Messages'),
+        title:  Text('messages'.tr),
         backgroundColor: Colors.grey[900],
       ),
       body: StreamBuilder<QuerySnapshot>(
@@ -80,8 +81,8 @@ class _ConversationsPageState extends State<ConversationsPage> {
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return const Center(
-              child: Text('Error loading conversations'),
+            return  Center(
+              child: Text('conError'.tr),
             );
           }
           final sentMessages = snapshot.data?.docs ?? [];
@@ -103,8 +104,8 @@ class _ConversationsPageState extends State<ConversationsPage> {
                 );
               }
               if (snapshot.hasError) {
-                return const Center(
-                  child: Text('Error loading conversations'),
+                return  Center(
+                  child: Text('conError'.tr),
                 );
               }
               final receivedMessages = snapshot.data?.docs ?? [];
@@ -114,7 +115,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
               final allConversations = {...sentRecipients, ...receivedSenders};
 
               if (allConversations.isEmpty) {
-                return const Center(
+                return  Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
@@ -124,7 +125,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
                       ),
                       Padding(padding: EdgeInsets.only(top: 20.0)),
                       Text(
-                        'Start a conversation with a seller',
+                        'conSuccess'.tr,
                         style: TextStyle(fontSize: 18.0),
                       ),
                     ],

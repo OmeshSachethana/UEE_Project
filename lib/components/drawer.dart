@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:new_app/components/my_list_tile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -9,6 +10,7 @@ class MyDrawer extends StatelessWidget {
   final void Function()? onMessageTap;
   final void Function()? onProductTap;
   final void Function()? onExchangeTap;
+  final void Function()? onLanguageTap;
 
   const MyDrawer({
     super.key,
@@ -17,6 +19,7 @@ class MyDrawer extends StatelessWidget {
     required this.onMessageTap,
     required this.onProductTap,
     required this.onExchangeTap,
+    required this.onLanguageTap,
   });
 
   Future<int> countUnreadConversations() async {
@@ -57,25 +60,30 @@ class MyDrawer extends StatelessWidget {
         ),
         MyListTile(
           icon: Icons.home,
-          text: 'H O M E',
+          text: 'D-Home'.tr,
           onTap: () => Navigator.pop(context),
         ),
 
         //profile
         MyListTile(
-            icon: Icons.person, text: "P R O F I L E", onTap: onProfileTap),
+            icon: Icons.person, text: "D-Profile".tr, onTap: onProfileTap),
 
         //PRODUCTS
         MyListTile(
             icon: Icons.article,
-            text: "M Y  P R O D U C T S",
+            text: "D-MyProduct".tr,
             onTap: onProductTap),
 
         //Exchanges
         MyListTile(
             icon: Icons.swap_horiz,
-            text: "E X C H A N G E S",
+            text: "D-Exchanges".tr,
             onTap: onExchangeTap),
+
+        MyListTile(
+            icon: Icons.swap_horiz,
+            text: "D-Language".tr,
+            onTap:  onLanguageTap),
 
         //messages
         FutureBuilder<int>(
@@ -86,7 +94,7 @@ class MyDrawer extends StatelessWidget {
             } else {
               return MyListTile(
                 icon: Icons.message,
-                text: "M E S S A G E S",
+                text: "D-Messages".tr,
                 onTap: onMessageTap,
                 unreadCount: snapshot.data,
               );
@@ -95,7 +103,7 @@ class MyDrawer extends StatelessWidget {
         ),
 
         MyListTile(
-            icon: Icons.logout, text: "L O G O U T", onTap: onSignoutTap),
+            icon: Icons.logout, text: "D-logout".tr, onTap: onSignoutTap),
       ]),
     );
   }

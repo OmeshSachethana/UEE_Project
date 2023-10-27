@@ -37,7 +37,7 @@ class _ProductsViewState extends State<ProductsView> {
             return data != null &&
                 data['name'] != null &&
                 data['name'].toLowerCase().contains(searchText.toLowerCase()) &&
-                (widget.productType == 'all' || data['productType'] == widget.productType); // Filter by productType
+                (widget.productType == 'all' || data['category'] == widget.productType); // Filter by productType
           }).toList();
           return Column(
             children: <Widget>[

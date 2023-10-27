@@ -104,6 +104,7 @@ class ProductDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.black,
         title: Text(productData?['name'] ?? 'Product Details'),
       ),
       body: Padding(
@@ -228,7 +229,7 @@ class ProductDetailScreen extends StatelessWidget {
 
             // Feedbacks Button
             Center(
-              child: ElevatedButton(
+              child: MaterialButton(
                 onPressed: () {
                   // Navigate to the FeedbackList screen, passing the productId
                   Navigator.push(
@@ -238,10 +239,20 @@ class ProductDetailScreen extends StatelessWidget {
                     ),
                   );
                 },
+                height: 50,
+                minWidth: 200,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                color: Colors.black,
                 child: Text(
-                  'Feedbacks',
-                  style: TextStyle(fontSize: 24), // Increased the font size
-                ),
+                          "Feedbacks",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
               ),
             ),
           ],

@@ -77,7 +77,7 @@ class MyDrawer extends StatelessWidget {
           ),
           MyListTile(
             icon: Icons.recycling,
-            text: "A U C T I O N S",
+            text: "D-Auction".tr,
             onTap: onAuctionTap,
           ),
           MyListTile(
@@ -107,12 +107,12 @@ class MyDrawer extends StatelessWidget {
           ),
           MyListTile(
             icon: Icons.recycling,
-            text: "R E C Y C L E   C E N T E R",
+            text: "D-RecycleC".tr,
             onTap: onRecycleCenterTap,
           ),
           MyListTile(
             icon: Icons.recycling_sharp,
-            text: "R E C Y C L E   P R O D U C T",
+            text: "D-RecycleP".tr,
             onTap: onRecyclProductTap,
           ),
           MyListTile(

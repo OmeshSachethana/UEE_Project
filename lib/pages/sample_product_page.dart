@@ -82,7 +82,7 @@ class ProductPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(5.0),
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
@@ -104,8 +104,13 @@ class ProductPage extends StatelessWidget {
                   ),
                 ),
               ),
-              Container(
-                height: 70,
+              Card(
+                child:Padding(
+                  padding: EdgeInsets.all(10.0),
+                  child: Column(
+                  children: <Widget>[
+                                    Container(
+                height: 60,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -122,7 +127,8 @@ class ProductPage extends StatelessWidget {
               ),
               Container(
                 height: 60,
-                child: Row(
+                child: Flexible(
+                  child: Row(
                   children: <Widget>[
                     _buildCategory(context ,"shirtCat.webp", 0xffDB76E4,'Shirt'),
                     _buildCategory(context ,"trousers.png", 0xff5CC9EB, 'Trousers'),
@@ -131,7 +137,17 @@ class ProductPage extends StatelessWidget {
                     _buildCategory(context ,"TieCat.png", 0xffD3CD4C,"Ties"),
                   ],
                 ),
+                  
+                  )
+                
               ),
+                  ],
+                )
+                )
+                
+                
+),
+              
               Container(
                 height: 120,
                 width: double.infinity,

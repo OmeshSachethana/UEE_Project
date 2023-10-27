@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher.dart';
 //import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class RecycledProductDetailEditPage extends StatelessWidget {
@@ -68,7 +69,6 @@ class RecycledProductDetailEditPage extends StatelessWidget {
     }
   }
 
-/*
   Future<void> _openMapsToFindRecycleCenter() async {
     final recycleCenterName = assignedCenterMYController.text;
 
@@ -78,7 +78,7 @@ class RecycledProductDetailEditPage extends StatelessWidget {
     }
 
     final query =
-        'Recycle Center $recycleCenterName'; // You can customize the query
+        'Sri Lanka Recycle Center $recycleCenterName'; // You can customize the query
 
     // Construct the Google Maps URL with the search query
     final mapsUrl = 'https://www.google.com/maps/search/?api=1&query=$query';
@@ -92,45 +92,6 @@ class RecycledProductDetailEditPage extends StatelessWidget {
       }
     } catch (e) {
       print('Error opening maps: $e');
-    }
-  }
-  */
-
-  Future<void> _openMapsToFindRecycleCenter() async {
-    final recycleCenterName = assignedCenterMYController.text;
-
-    if (recycleCenterName.isEmpty) {
-      print('Please enter a recycle center name to search.');
-      return;
-    }
-
-    //final query = Uri.encodeComponent('Recycle Center $recycleCenterName');
-
-    // Construct the Google Maps URL with the search query
-    final mapsUrl = 'https://maps.google.com/maps/@37.0625,-95.677068,4z';
-
-    try {
-      if (await canLaunch(mapsUrl)) {
-        await launch(mapsUrl);
-      } else {
-        print('Could not launch $mapsUrl');
-      }
-    } catch (e) {
-      print('Error opening maps: $e');
-    }
-  }
-
-  Future<void> _openYouTube() async {
-    final youtubePackageName =
-        'com.google.android.youtube'; // Package name for YouTube on Android
-    final youtubeUrl = 'https://www.youtube.com/';
-
-    try {
-      await canLaunch(youtubeUrl)
-          ? await launch(youtubeUrl)
-          : throw 'Could not launch $youtubeUrl';
-    } catch (e) {
-      print('Error opening YouTube: $e');
     }
   }
 
@@ -148,8 +109,7 @@ class RecycledProductDetailEditPage extends StatelessWidget {
           children: [
             Card(
               margin: EdgeInsets.all(16),
-              color: Color.fromARGB(255, 229, 242,
-                  220), // Set the background color for the first card
+              color: Color.fromARGB(255, 229, 242, 220),
               child: Column(
                 children: [
                   Container(
@@ -164,28 +124,51 @@ class RecycledProductDetailEditPage extends StatelessWidget {
                     padding: EdgeInsets.all(16),
                   ),
                   ListTile(
-                    title: Text('Name: ${productData['name']}'),
-                  ),
-                  ListTile(
-                    title: Text('Quantity: ${productData['quantity']}'),
+                    title: Text(
+                      'Name: ${productData['name']}',
+                      style: TextStyle(
+                        fontSize: 25, // Adjust the font size
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                   ListTile(
                     title: Text(
-                        'Assigned Status: ${productData['assigned_status']}'),
+                      'Quantity: ${productData['quantity']}',
+                      style: TextStyle(
+                        fontSize: 20, // Adjust the font size
+                      ),
+                    ),
                   ),
                   ListTile(
                     title: Text(
-                        'Assigned Center: ${productData['assigned_center']}'),
+                      'Assigned Status: ${productData['assigned_status']}',
+                      style: TextStyle(
+                        fontSize: 20, // Adjust the font size
+                      ),
+                    ),
+                  ),
+                  ListTile(
+                    title: Text(
+                      'Assigned Center: ${productData['assigned_center']}',
+                      style: TextStyle(
+                        fontSize: 20, // Adjust the font size
+                      ),
+                    ),
                   ),
                   ListTile(
                     title: ElevatedButton(
                       onPressed: _sendEmail,
                       style: ElevatedButton.styleFrom(
-                        primary:
-                            Color.fromARGB(255, 38, 38, 39), // Background color
-                        onPrimary: Colors.white, // Text color
+                        primary: Color.fromARGB(255, 38, 38, 39),
+                        onPrimary: Colors.white,
                       ),
-                      child: Text('Send Email'),
+                      child: Text(
+                        'Send Email',
+                        style: TextStyle(
+                          fontSize: 20, // Set your desired font size
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -198,28 +181,65 @@ class RecycledProductDetailEditPage extends StatelessWidget {
               child: Column(
                 children: [
                   ListTile(
-                    title: Text('Assign Recycle Center'),
+                    title: Text(
+                      'Assign Recycle Center',
+                      style: TextStyle(
+                        fontSize: 25,
+                        fontWeight:
+                            FontWeight.bold, // Set your desired font size
+                      ),
+                    ),
                   ),
                   ListTile(
                     title: TextField(
+                      style: TextStyle(
+                        fontSize: 20, // Adjust the font size
+                      ),
                       controller: nameController,
                       decoration: InputDecoration(labelText: 'Name'),
                     ),
                   ),
                   ListTile(
                     title: TextField(
+                      style: TextStyle(
+                        fontSize: 20, // Adjust the font size
+                      ),
                       controller: quantityController,
                       decoration: InputDecoration(labelText: 'Quantity'),
                     ),
                   ),
+
+                  //-------------------------DropDown------------------------------------
                   ListTile(
-                    title: TextField(
-                      controller: assignedStatusController,
+                    title: DropdownButtonFormField<String>(
+                      value: assignedStatusController.text,
                       decoration: InputDecoration(labelText: 'Assigned Status'),
+                      items: ['Unassigned', 'Assigned']
+                          .map((status) => DropdownMenuItem<String>(
+                                value: status,
+                                child: Text(
+                                  status,
+                                  style: TextStyle(
+                                    color: Colors
+                                        .black, // Set your desired font color
+                                  ),
+                                ),
+                              ))
+                          .toList(),
+                      onChanged: (value) {
+                        assignedStatusController.text = value!;
+                      },
+                      style: TextStyle(
+                        fontSize: 20, // Set your desired font size
+                      ),
                     ),
                   ),
+                  //--------------------------------------------------------------------
                   ListTile(
                     title: TextField(
+                      style: TextStyle(
+                        fontSize: 20, // Adjust the font size
+                      ),
                       controller: assignedCenterMYController,
                       decoration: InputDecoration(labelText: 'Assigned Center'),
                     ),
@@ -236,46 +256,30 @@ class RecycledProductDetailEditPage extends StatelessWidget {
                             Color.fromARGB(255, 38, 38, 39), // Background color
                         onPrimary: Colors.white, // Text color
                       ),
-                      child: Text('Save'),
+                      child: Text(
+                        'Save',
+                        style: TextStyle(
+                          fontSize: 20, // Set your desired font size
+                        ),
+                      ),
                     ),
                   ),
                   ListTile(
                     title: ElevatedButton(
-                      onPressed: () {
-                        _openMapsToFindRecycleCenter();
-                      },
+                      onPressed:
+                          _openMapsToFindRecycleCenter, // Call the new function
                       style: ElevatedButton.styleFrom(
-                        primary:
-                            Color.fromARGB(255, 38, 38, 39), // Background color
-                        onPrimary: Colors.white, // Text color
+                        primary: Color.fromARGB(255, 38, 38, 39),
+                        onPrimary: Colors.white,
                       ),
-                      child: Text('Find Recycle Center'),
+                      child: Text(
+                        'Find Recycle Center',
+                        style: TextStyle(
+                          fontSize: 20, // Set your desired font size
+                        ),
+                      ),
                     ),
                   ),
-                  ListTile(
-                    title: ElevatedButton(
-                      onPressed: _openYouTube,
-                      style: ElevatedButton.styleFrom(
-                        primary:
-                            Color.fromARGB(255, 38, 38, 39), // Background color
-                        onPrimary: Colors.white, // Text color
-                      ),
-                      child: Text('You tube'),
-                    ),
-                  ),
-                  /*Container(
-                    height: 300, // Adjust the height as needed
-                    child: GoogleMap(
-                      onMapCreated: (controller) {
-                        _controller = controller;
-                      },
-                      initialCameraPosition: CameraPosition(
-                        target: LatLng(0.0,
-                            0.0), // Set an initial location (latitude, longitude)
-                        zoom: 15, // Set the initial zoom level
-                      ),
-                    ),
-                  ),*/
                 ],
               ),
             ),

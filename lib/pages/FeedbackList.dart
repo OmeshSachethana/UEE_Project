@@ -107,10 +107,23 @@ class _FeedbackListState extends State<FeedbackList> {
                                 ),
                                 GestureDetector(
                                   onTap: () async {
-                                    final docData = FirebaseFirestore.instance
-                                        .collection('feedbacks')
-                                        .doc(streamSnapshot.data!.docs[index]['id']);
-                                    await docData.delete();
+                                    QuickAlert.show(
+                                      context: context,
+                                      type: QuickAlertType.confirm,
+                                      barrierDismissible: true,
+                                      confirmBtnText: 'Delete', // Change the button text to "Delete"
+                                      title: 'Delete Confirmation',
+                                      text: 'Are you sure you want to delete this feedback?',
+                                      confirmBtnColor: Colors.red, // Change the button color to red for delete confirmation
+                                      onConfirmBtnTap: () {
+
+                                        final docData = FirebaseFirestore.instance
+                                            .collection('feedbacks')
+                                            .doc(streamSnapshot.data!.docs[index]['id']);
+                                         docData.delete();
+                                      },
+                                    );
+
                                   },
                                   child: Icon(
                                     Icons.delete,

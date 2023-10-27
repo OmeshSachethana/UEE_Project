@@ -43,7 +43,24 @@ class Language extends Translations{
       'auctionp': 'Auction Products',
       'auctionon':'Ongoing Auctions',
       'myauction':'My Auctions',
-      'stimer':'Start Timer'
+      'stimer':'Start Timer',
+      'D-Auction':'A U C T I O N S',
+      'D-RecycleC':'R E C Y C  L E  C E N T E R',
+      'D-RecycleP':'R E C Y C L E  P R O D U C T',
+      'eproduct':'Edit Product',
+      'cancel':'Cancel',
+      'save':'Save',
+      'dproduct':'Delete Product',
+      'dconfirm':'Are you sure you want to delete this product?',
+      'delete':'Delete',
+      'unassigned':'Unassigned',
+      'rproduct':'Recycle Product',
+      'url':'Image URL',
+      'acenter':'Assigned Center',
+      'astatus':'Assigned Status',
+      'recycle':'Recycle',
+      'mproduct':'My Products',
+      'pending':'Pending'
 
     },
     'sin':{
@@ -54,14 +71,14 @@ class Language extends Translations{
       'myproducts':'මගේ නිෂ්පාදන',
       'addproduct':'නිෂ්පාදන එකතු කරන්න',
       'name':'නම',
-      'quantity':'ප්රමාණය',
+      'quantity':'ප්‍රමාණය',
       'price':'මිල',
       'description':'විස්තර',
       'upload':'රූපය උඩුගත කරන්න',
       'addfeedback':'ප්‍රතිපෝෂණයක් එක් කරන්න',
       'user':'පරිශීලක නාමය',
-      'feedback': 'ප්රතිපෝෂණ',
-      'rating': 'ශ්රේණිගත කිරීම',
+      'feedback': 'ප්‍රතිපෝෂණ',
+      'rating': 'ශ්‍රේණිගත කිරීම',
       'submit':'ඉදිරිපත් කරන්න',
       'language':'භාෂාවක් තෝරන්න',
       'listfeedback':'ප්‍රතිපෝෂණ ලැයිස්තුව',
@@ -85,7 +102,10 @@ class Language extends Translations{
       'auctionp': 'වෙන්දේසි නිෂ්පාදන',
       'auctionon':'දැනට පවතින වෙන්දේසි',
       'myauction':'මගේ වෙන්දේසි',
-      'stimer':'ටයිමර් ආරම්භ කරන්න'
+      'stimer':'ටයිමර් ආරම්භ කරන්න',
+      'D-Auction':'වෙන්දේසි',
+      'D-RecycleC':'ප්‍රතිචක්‍රීකරණ මධ්‍යස්ථානය',
+      'D-RecycleP':'ප්‍රතිචක්‍රීකරණ නිෂ්පාදනය'
     }
   };
 }

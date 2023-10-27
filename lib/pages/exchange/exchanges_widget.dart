@@ -35,11 +35,13 @@ class _ExchangesWidgetState extends State<ExchangesWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 218, 245, 209),
       body: Align(
         alignment: Alignment.topCenter,
         child: _buildBody(_statusOptions[_selectedIndex]),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: const Color.fromARGB(255, 218, 245, 209),
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.pending_actions),
@@ -116,10 +118,7 @@ class _ExchangesWidgetState extends State<ExchangesWidget> {
               padding: const EdgeInsets.all(40.0),
               child: Image.asset(
                 'lib/images/$status.png',
-                width: 150,
                 height: 150,
-                color: const Color.fromRGBO(255, 255, 255, 0.896),
-                colorBlendMode: BlendMode.lighten,
               ),
             ),
           ],

@@ -7,6 +7,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:new_app/pages/FeedbackList.dart';
 import 'package:quickalert/quickalert.dart';
 
 class AddFeedback extends StatefulWidget {
@@ -135,6 +136,22 @@ class _AddFeedbackState extends State<AddFeedback> {
                         'productId': widget.productId,
                       };
                       showProgressIndicator = true;
+                      QuickAlert.show(
+                        context: context,
+                        type: QuickAlertType.custom,
+                        barrierDismissible: true,
+                        confirmBtnText: 'Okay', // Change the button text to "Okay"
+                        customAsset: 'lib/images/Success.gif',
+                        widget: Center(child: Text('Feedback added Successfully'),) ,
+                        onConfirmBtnTap: () {
+                          Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (context) => FeedbackList(productId: widget.productId,),
+                          ));
+                        },
+                        title: 'Success',
+                       
+                        
+                      );
                       if (widget.id.isEmpty) {
                         await dUser.set(jsonData).then((value) {
                           userNameController.text = '';

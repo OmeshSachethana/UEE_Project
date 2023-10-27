@@ -52,12 +52,12 @@ class _ConversationsPageState extends State<ConversationsPage> {
     final batch = FirebaseFirestore.instance.batch();
 
     // Mark each sent message as deleted by the sender
-    sentMessages.docs
-        .forEach((doc) => batch.update(doc.reference, {'senderDeleted': true, 'isRead': true}));
+    sentMessages.docs.forEach((doc) =>
+        batch.update(doc.reference, {'senderDeleted': true, 'isRead': true}));
 
     // Mark each received message as deleted by the receiver
-    receivedMessages.docs.forEach(
-        (doc) => batch.update(doc.reference, {'receiverDeleted': true, 'isRead': true}));
+    receivedMessages.docs.forEach((doc) =>
+        batch.update(doc.reference, {'receiverDeleted': true, 'isRead': true}));
 
     // Commit the batch
     await batch.commit();
@@ -68,7 +68,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 218, 245, 209),
       appBar: AppBar(
-        title:  Text('messages'.tr),
+        title: Text('messages'.tr),
         backgroundColor: Colors.grey[900],
       ),
       body: StreamBuilder<QuerySnapshot>(
@@ -81,7 +81,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return  Center(
+            return Center(
               child: Text('conError'.tr),
             );
           }
@@ -104,7 +104,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
                 );
               }
               if (snapshot.hasError) {
-                return  Center(
+                return Center(
                   child: Text('conError'.tr),
                 );
               }
@@ -115,24 +115,25 @@ class _ConversationsPageState extends State<ConversationsPage> {
               final allConversations = {...sentRecipients, ...receivedSenders};
 
               if (allConversations.isEmpty) {
-                return  Center(
+                return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Image(
+                      const Image(
                         image: AssetImage('lib/images/noMessages.png'),
                         height: 100,
                       ),
-                      Padding(padding: EdgeInsets.only(top: 20.0)),
+                      const Padding(padding: EdgeInsets.only(top: 20.0)),
                       Text(
                         'conSuccess'.tr,
-                        style: TextStyle(fontSize: 18.0),
+                        style: const TextStyle(fontSize: 18.0),
                       ),
                     ],
                   ),
                 );
               } else {
                 return ListView.builder(
+                  padding: const EdgeInsets.only(top: 15.0),
                   itemCount: allConversations.length,
                   itemBuilder: (context, index) {
                     final conversation = allConversations.elementAt(index);
@@ -148,7 +149,12 @@ class _ConversationsPageState extends State<ConversationsPage> {
                         final unreadMessages = snapshot.data?.docs.length ?? 0;
 
                         return ListTile(
-                          title: Text(conversation),
+                          leading: const CircleAvatar(
+                            backgroundImage: NetworkImage(
+                                'https://image.pngaaa.com/227/2662227-middle.png'), // replace with the actual URL or path to the profile icon
+                            radius: 40,
+                          ),
+                          title: Text(conversation, style: const TextStyle(fontSize: 20.0)),
                           trailing: unreadMessages > 0
                               ? CircleAvatar(
                                   radius: 10.0,
@@ -188,7 +194,8 @@ class _ConversationsPageState extends State<ConversationsPage> {
                                           Navigator.of(context).pop(false),
                                     ),
                                     TextButton(
-                                      child: const Text('Delete', style: TextStyle(color: Colors.red)),
+                                      child: const Text('Delete',
+                                          style: TextStyle(color: Colors.red)),
                                       onPressed: () =>
                                           Navigator.of(context).pop(true),
                                     ),

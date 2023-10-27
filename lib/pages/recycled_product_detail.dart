@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+//import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class RecycledProductDetailEditPage extends StatelessWidget {
   final Map<String, dynamic> productData;
@@ -10,7 +10,7 @@ class RecycledProductDetailEditPage extends StatelessWidget {
   final TextEditingController quantityController;
   final TextEditingController assignedStatusController;
   final TextEditingController assignedCenterMYController;
-  GoogleMapController? _controller;
+  //GoogleMapController? _controller;
 
   final String documentId;
 
@@ -263,7 +263,7 @@ class RecycledProductDetailEditPage extends StatelessWidget {
                       child: Text('You tube'),
                     ),
                   ),
-                  Container(
+                  /*Container(
                     height: 300, // Adjust the height as needed
                     child: GoogleMap(
                       onMapCreated: (controller) {
@@ -275,7 +275,7 @@ class RecycledProductDetailEditPage extends StatelessWidget {
                         zoom: 15, // Set the initial zoom level
                       ),
                     ),
-                  ),
+                  ),*/
                 ],
               ),
             ),

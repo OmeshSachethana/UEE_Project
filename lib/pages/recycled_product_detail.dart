@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class RecycledProductDetailEditPage extends StatelessWidget {
   final Map<String, dynamic> productData;
@@ -8,6 +10,7 @@ class RecycledProductDetailEditPage extends StatelessWidget {
   final TextEditingController quantityController;
   final TextEditingController assignedStatusController;
   final TextEditingController assignedCenterMYController;
+  GoogleMapController? _controller;
 
   final String documentId;
 
@@ -22,6 +25,7 @@ class RecycledProductDetailEditPage extends StatelessWidget {
     required TextEditingController assignedCenterrController,
     required imageUrl,
     required TextEditingController assignedCenterController,
+
     //required TextEditingController assignedCenterMYController,
   });
 
@@ -64,6 +68,7 @@ class RecycledProductDetailEditPage extends StatelessWidget {
     }
   }
 
+/*
   Future<void> _openMapsToFindRecycleCenter() async {
     final recycleCenterName = assignedCenterMYController.text;
 
@@ -89,6 +94,45 @@ class RecycledProductDetailEditPage extends StatelessWidget {
       print('Error opening maps: $e');
     }
   }
+  */
+
+  Future<void> _openMapsToFindRecycleCenter() async {
+    final recycleCenterName = assignedCenterMYController.text;
+
+    if (recycleCenterName.isEmpty) {
+      print('Please enter a recycle center name to search.');
+      return;
+    }
+
+    //final query = Uri.encodeComponent('Recycle Center $recycleCenterName');
+
+    // Construct the Google Maps URL with the search query
+    final mapsUrl = 'https://maps.google.com/maps/@37.0625,-95.677068,4z';
+
+    try {
+      if (await canLaunch(mapsUrl)) {
+        await launch(mapsUrl);
+      } else {
+        print('Could not launch $mapsUrl');
+      }
+    } catch (e) {
+      print('Error opening maps: $e');
+    }
+  }
+
+  Future<void> _openYouTube() async {
+    final youtubePackageName =
+        'com.google.android.youtube'; // Package name for YouTube on Android
+    final youtubeUrl = 'https://www.youtube.com/';
+
+    try {
+      await canLaunch(youtubeUrl)
+          ? await launch(youtubeUrl)
+          : throw 'Could not launch $youtubeUrl';
+    } catch (e) {
+      print('Error opening YouTube: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,12 +141,15 @@ class RecycledProductDetailEditPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Product Details'),
+        backgroundColor: Colors.grey[900],
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             Card(
               margin: EdgeInsets.all(16),
+              color: Color.fromARGB(255, 229, 242,
+                  220), // Set the background color for the first card
               child: Column(
                 children: [
                   Container(
@@ -133,6 +180,11 @@ class RecycledProductDetailEditPage extends StatelessWidget {
                   ListTile(
                     title: ElevatedButton(
                       onPressed: _sendEmail,
+                      style: ElevatedButton.styleFrom(
+                        primary:
+                            Color.fromARGB(255, 38, 38, 39), // Background color
+                        onPrimary: Colors.white, // Text color
+                      ),
                       child: Text('Send Email'),
                     ),
                   ),
@@ -141,6 +193,8 @@ class RecycledProductDetailEditPage extends StatelessWidget {
             ),
             Card(
               margin: EdgeInsets.all(16),
+              color: Color.fromARGB(255, 229, 242,
+                  220), // Set the background color for the first card
               child: Column(
                 children: [
                   ListTile(
@@ -174,8 +228,14 @@ class RecycledProductDetailEditPage extends StatelessWidget {
                     title: ElevatedButton(
                       onPressed: () {
                         _updateProductDetails();
+
                         Navigator.of(context).pop();
                       },
+                      style: ElevatedButton.styleFrom(
+                        primary:
+                            Color.fromARGB(255, 38, 38, 39), // Background color
+                        onPrimary: Colors.white, // Text color
+                      ),
                       child: Text('Save'),
                     ),
                   ),
@@ -184,7 +244,36 @@ class RecycledProductDetailEditPage extends StatelessWidget {
                       onPressed: () {
                         _openMapsToFindRecycleCenter();
                       },
+                      style: ElevatedButton.styleFrom(
+                        primary:
+                            Color.fromARGB(255, 38, 38, 39), // Background color
+                        onPrimary: Colors.white, // Text color
+                      ),
                       child: Text('Find Recycle Center'),
+                    ),
+                  ),
+                  ListTile(
+                    title: ElevatedButton(
+                      onPressed: _openYouTube,
+                      style: ElevatedButton.styleFrom(
+                        primary:
+                            Color.fromARGB(255, 38, 38, 39), // Background color
+                        onPrimary: Colors.white, // Text color
+                      ),
+                      child: Text('You tube'),
+                    ),
+                  ),
+                  Container(
+                    height: 300, // Adjust the height as needed
+                    child: GoogleMap(
+                      onMapCreated: (controller) {
+                        _controller = controller;
+                      },
+                      initialCameraPosition: CameraPosition(
+                        target: LatLng(0.0,
+                            0.0), // Set an initial location (latitude, longitude)
+                        zoom: 15, // Set the initial zoom level
+                      ),
                     ),
                   ),
                 ],

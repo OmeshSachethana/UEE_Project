@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:new_app/pages/productDetails.dart';
@@ -14,6 +15,7 @@ class ProductsView extends StatefulWidget {
 
 class _ProductsViewState extends State<ProductsView> {
   String searchText = ''; // To store the search text
+  final loggedInUserEmail = FirebaseAuth.instance.currentUser?.email;
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +74,8 @@ class _ProductsViewState extends State<ProductsView> {
                             builder: (context) => ProductDetailScreen(
                               productData: data,
                               productId: filteredProducts[index].id,
+                              opEmail: data?['op_email'] ?? '',
+                              loggedInUserEmail: loggedInUserEmail ?? '',
                             ),
                           ),
                         );

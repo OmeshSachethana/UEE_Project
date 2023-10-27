@@ -3,42 +3,102 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:new_app/pages/FeedbackList.dart';
 
+import 'exchange/escrow_process.dart';
+import 'test_message.dart';
+
 class ProductDetailScreen extends StatelessWidget {
   final Map<String, dynamic>? productData;
   final String productId;
+  final String opEmail;
+  final String loggedInUserEmail;
 
   ProductDetailScreen({
     required this.productData,
     required this.productId,
+    required this.opEmail,
+    required this.loggedInUserEmail,
   });
 
-
-Future<double> getAverageRating(String productId) async {
-  // Reference to the 'feedbacks' collection in Firestore
-  CollectionReference feedbacksCollection = FirebaseFirestore.instance.collection('feedbacks');
-
-  // Query feedbacks for the specific product
-  QuerySnapshot feedbacks = await feedbacksCollection.where('productId', isEqualTo: productId).get();
-
-  // Check if there are any feedbacks
-  if (feedbacks.docs.isNotEmpty) {
-    double totalRating = 0;
-    int feedbackCount = feedbacks.docs.length;
-
-    // Calculate the total rating
-    for (QueryDocumentSnapshot feedback in feedbacks.docs) {
-      totalRating += feedback['rating'] as double;
-    }
-
-    // Calculate the average rating
-    double averageRating = totalRating / feedbackCount;
-    return averageRating;
-  } else {
-    // If there are no feedbacks, return a default value (e.g., 0)
-    return 0;
+  void _navigateToMessageWidget(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Message Seller'),
+          content: MessageWidget(recipientEmail: opEmail),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
   }
-}
 
+  void _navigateToExchangeWidget(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Exchange Items'),
+          content: EscrowWidget(
+            recipientEmail: opEmail,
+            loggedInUserEmail: loggedInUserEmail,
+            productId: productId,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<String> getProductType() async {
+    final doc = await FirebaseFirestore.instance
+        .collection('products')
+        .doc(productId)
+        .get();
+    return doc['product_type'];
+  }
+
+  Future<double> getAverageRating(String productId) async {
+    // Reference to the 'feedbacks' collection in Firestore
+    CollectionReference feedbacksCollection =
+        FirebaseFirestore.instance.collection('feedbacks');
+
+    // Query feedbacks for the specific product
+    QuerySnapshot feedbacks = await feedbacksCollection
+        .where('productId', isEqualTo: productId)
+        .get();
+
+    // Check if there are any feedbacks
+    if (feedbacks.docs.isNotEmpty) {
+      double totalRating = 0;
+      int feedbackCount = feedbacks.docs.length;
+
+      // Calculate the total rating
+      for (QueryDocumentSnapshot feedback in feedbacks.docs) {
+        totalRating += feedback['rating'] as double;
+      }
+
+      // Calculate the average rating
+      double averageRating = totalRating / feedbackCount;
+      return averageRating;
+    } else {
+      // If there are no feedbacks, return a default value (e.g., 0)
+      return 0;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,10 +120,27 @@ Future<double> getAverageRating(String productId) async {
 
             SizedBox(height: 20),
 
-            // Product Name
-            Text(
-              'Product Name: ${productData?['name'] ?? 'No Name'}',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            // Product Name and Chat Button
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Product Name: ${productData?['name'] ?? 'No Name'}',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+                if (opEmail != loggedInUserEmail)
+                  Container(
+                    height: 45.0,
+                    width: 45.0,
+                    child: FloatingActionButton(
+                      onPressed: () {
+                        _navigateToMessageWidget(context);
+                      },
+                      child: Icon(Icons.chat, size: 25.0),
+                      backgroundColor: Colors.orange,
+                    ),
+                  ),
+              ],
             ),
 
             // Gap
@@ -124,6 +201,30 @@ Future<double> getAverageRating(String productId) async {
 
             // Gap
             SizedBox(height: 20),
+
+            // Exchanges Button
+            FutureBuilder<String>(
+              future: getProductType(),
+              builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                if (snapshot.hasData) {
+                  if (snapshot.data == "normal" &&
+                      opEmail != loggedInUserEmail) {
+                    return ElevatedButton(
+                      onPressed: () {
+                        _navigateToExchangeWidget(context);
+                      },
+                      child: const Text('Exchange Items'),
+                    );
+                  } else {
+                    return Container(); // Render an empty container when product type is not "normal"
+                  }
+                } else if (snapshot.hasError) {
+                  return Text("Error: ${snapshot.error}");
+                }
+                // By default, show a loading spinner.
+                return const CircularProgressIndicator();
+              },
+            ),
 
             // Feedbacks Button
             Center(

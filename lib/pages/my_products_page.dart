@@ -219,6 +219,7 @@ class MyProductsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('mproduct'.tr),
+        backgroundColor: Colors.grey[900],
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.add),

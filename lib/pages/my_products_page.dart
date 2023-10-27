@@ -187,13 +187,14 @@ class MyProductsPage extends StatelessWidget {
                   await FirebaseFirestore.instance.collection('recycle').add({
                     'name': titleController.text,
                     'quantity': int.parse(quantityController.text),
-                    'price': double.parse(priceController.text),
+                    //'price': double.parse(priceController.text),
                     'description': descriptionController.text,
                     'imageUrl': imageUrlController.text,
                     // Add the new fields and set their default values
                     'assigned_center': assignedCenterController.text,
                     'assigned_status': assignedStatusController.text,
                   });
+
                   // Delete the product from the "products" collection
                   await FirebaseFirestore.instance
                       .collection('products')
@@ -218,6 +219,7 @@ class MyProductsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('My Products'),
+        backgroundColor: Colors.grey[900],
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.add),

@@ -6,6 +6,7 @@ import 'package:new_app/components/drawer.dart';
 import 'package:new_app/pages/AddFeedback.dart';
 import 'package:new_app/pages/FeedbackList.dart';
 import 'package:new_app/pages/my_products_page.dart';
+import 'package:new_app/pages/product_search.dart';
 import 'package:new_app/pages/profile_page.dart';
 import 'package:new_app/pages/recycle_center.dart';
 import 'package:new_app/pages/recycle_product.dart';
@@ -209,11 +210,17 @@ class HomePage extends StatelessWidget {
           },
         ),
         actions: [
+          IconButton(
+            icon: Icon(Icons.search), // This is the search icon button
+            onPressed: () {
+              showSearch(context: context, delegate: ProductSearch());
+            },
+          ),
           buildNotificationsButton(),
           IconButton(
             onPressed: () => signUserOut(context),
             icon: const Icon(Icons.logout),
-          )
+          ),
         ],
       ),
       drawer: MyDrawer(
@@ -227,7 +234,8 @@ class HomePage extends StatelessWidget {
         onAuctionTap: () => goToAuctionPage(context),
         onRecyclProductTap: () => goToRecyclesProductPage(context),
       ),
-      body: ProductPage(loggedInUserEmail: user.email!), // Pass it here
+      body: ProductPage(loggedInUserEmail: user.email!),
+      // Pass it here
     );
   }
 }

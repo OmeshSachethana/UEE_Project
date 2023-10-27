@@ -210,11 +210,27 @@ class ProductDetailScreen extends StatelessWidget {
                 if (snapshot.hasData) {
                   if (snapshot.data == "normal" &&
                       opEmail != loggedInUserEmail) {
-                    return ElevatedButton(
-                      onPressed: () {
-                        _navigateToExchangeWidget(context);
-                      },
-                      child: const Text('Exchange Items'),
+                    return Center(
+                      child: MaterialButton(
+                        onPressed: () {
+                          _navigateToExchangeWidget(context);
+                        },
+                        height: 50,
+                        minWidth: 200,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          side: const BorderSide(color: Colors.black),
+                        ),
+                        color: const Color.fromARGB(255, 255, 255, 255),
+                        child: const Text(
+                          "Exchange Item",
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 0, 0, 0),
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
                     );
                   } else {
                     return Container(); // Render an empty container when product type is not "normal"
@@ -226,6 +242,8 @@ class ProductDetailScreen extends StatelessWidget {
                 return const CircularProgressIndicator();
               },
             ),
+
+            SizedBox(height: 25), // Gap
 
             // Feedbacks Button
             Center(
@@ -242,17 +260,17 @@ class ProductDetailScreen extends StatelessWidget {
                 height: 50,
                 minWidth: 200,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
+                  borderRadius: BorderRadius.circular(20),
+                ),
                 color: Colors.black,
                 child: Text(
-                          "Feedbacks",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
+                  "Feedbacks",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
             ),
           ],

@@ -113,11 +113,11 @@ class MyDrawer extends StatelessWidget {
             text: "D-RecycleP".tr,
             onTap: onRecyclProductTap,
           ),
-          MyListTile(
-            icon: Icons.logout,
-            text: "D-logout".tr,
-            onTap: onSignoutTap,
-          ),
+          // MyListTile(
+          //   icon: Icons.logout,
+          //   text: "D-logout".tr,
+          //   onTap: onSignoutTap,
+          // ),
         ]),
       ),
     );

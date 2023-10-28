@@ -74,7 +74,7 @@ class MyDrawer extends StatelessWidget {
             onTap: onProductTap,
           ),
           MyListTile(
-            icon: Icons.recycling,
+            icon: Icons.wallet,
             text: "D-Auction".tr,
             onTap: onAuctionTap,
           ),
@@ -123,4 +123,3 @@ class MyDrawer extends StatelessWidget {
     );
   }
 }
-//end

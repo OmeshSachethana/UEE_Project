@@ -30,18 +30,34 @@ class _EscrowWidgetState extends State<EscrowWidget> {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        const Text(
-          'Select the item you want to exchange:',
-          style: TextStyle(fontSize: 16.0),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            const Text(
+              'Select the item you want to\nexchange:',
+              style: TextStyle(fontSize: 16.0),
+            ),
+            Container(
+              padding: const EdgeInsets.only(left: 10.0),
+              height: 40,
+              child: FloatingActionButton(
+                onPressed: () async {
+                  final ImagePicker _picker = ImagePicker();
+                  image = await _picker.pickImage(source: ImageSource.gallery);
+                  setState(() {});
+                },
+                backgroundColor: Colors.green,
+                child: const Icon(
+                  Icons.file_upload,
+                  size: 25,
+                ),
+              ),
+            ),
+          ],
         ),
-        ElevatedButton(
-          onPressed: () async {
-            final ImagePicker _picker = ImagePicker();
-            image = await _picker.pickImage(source: ImageSource.gallery);
-            setState(() {});
-          },
-          child: const Text('Select item you want to exchange'),
-        ),
+
+        const SizedBox(height: 40),
+
         if (image != null)
           Column(
             children: <Widget>[
@@ -49,7 +65,7 @@ class _EscrowWidgetState extends State<EscrowWidget> {
                   File(image!.path)), // Display a preview of the selected image
             ],
           ),
-        ElevatedButton(
+        MaterialButton(
           onPressed: () async {
             if (image == null) {
               // Show a dialog indicating that no image was selected
@@ -130,7 +146,20 @@ class _EscrowWidgetState extends State<EscrowWidget> {
               },
             );
           },
-          child: const Text('Exchange'),
+          height: 45,
+          minWidth: 145,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          color: Colors.black,
+          child: const Text(
+            "Exchange",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ),
       ],
     );

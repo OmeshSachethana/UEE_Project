@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'add_product.dart';
+import 'package:get/get.dart';
+import 'add_product.dart'; // Import the AddProductPage
 
 class MyProductsPage extends StatelessWidget {
   final User user = FirebaseAuth.instance.currentUser!;
@@ -21,40 +22,40 @@ class MyProductsPage extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Edit Product'),
+          title: Text('eproduct'.tr),
           content: SingleChildScrollView(
             child: Column(
               children: <Widget>[
                 TextField(
                   controller: titleController,
-                  decoration: InputDecoration(labelText: 'Name'),
+                  decoration: InputDecoration(labelText: 'name'.tr),
                 ),
                 TextField(
                   controller: quantityController,
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(labelText: 'Quantity'),
+                  decoration: InputDecoration(labelText: 'quantity'.tr),
                 ),
                 TextField(
                   controller: priceController,
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(labelText: 'Price'),
+                  decoration: InputDecoration(labelText: 'price'.tr),
                 ),
                 TextField(
                   controller: descriptionController,
-                  decoration: InputDecoration(labelText: 'Description'),
+                  decoration: InputDecoration(labelText: 'description'.tr),
                 ),
               ],
             ),
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Cancel'),
+              child: Text('cancel'.tr),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text('Save'),
+              child: Text('save'.tr),
               onPressed: () async {
                 try {
                   await FirebaseFirestore.instance
@@ -83,17 +84,17 @@ class MyProductsPage extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Delete Product'),
-          content: Text('Are you sure you want to delete this product?'),
+          title: Text('dproduct'),
+          content: Text('dconfirm'.tr),
           actions: <Widget>[
             TextButton(
-              child: Text('Cancel'),
+              child: Text('cancel'.tr),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text('Delete'),
+              child: Text('delete'.tr),
               onPressed: () async {
                 try {
                   await FirebaseFirestore.instance
@@ -128,69 +129,71 @@ class MyProductsPage extends StatelessWidget {
     TextEditingController assignedCenterController =
         TextEditingController(text: null);
     TextEditingController assignedStatusController =
-        TextEditingController(text: "Unassigned");
+        TextEditingController(text: "unassigned".tr); // Set the default value
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Recycle Product'),
+          title: Text('rproduct'.tr),
           content: SingleChildScrollView(
             child: Column(
               children: <Widget>[
                 TextField(
                   controller: titleController,
-                  decoration: InputDecoration(labelText: 'Name'),
+                  decoration: InputDecoration(labelText: 'name'.tr),
                 ),
                 TextField(
                   controller: quantityController,
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(labelText: 'Quantity'),
+                  decoration: InputDecoration(labelText: 'quantity'.tr),
                 ),
                 TextField(
                   controller: priceController,
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(labelText: 'Price'),
+                  decoration: InputDecoration(labelText: 'price'.tr),
                 ),
                 TextField(
                   controller: descriptionController,
-                  decoration: InputDecoration(labelText: 'Description'),
+                  decoration: InputDecoration(labelText: 'description'.tr),
                 ),
                 TextField(
                   controller: imageUrlController,
-                  decoration: InputDecoration(labelText: 'Image URL'),
+                  decoration: InputDecoration(labelText: 'url'.tr),
                 ),
                 TextField(
                   controller: assignedCenterController,
-                  decoration: InputDecoration(labelText: 'Assigned Center'),
+                  decoration: InputDecoration(labelText: 'acenter'.tr),
                 ),
                 TextField(
                   controller: assignedStatusController,
-                  decoration: InputDecoration(labelText: 'Assigned Status'),
+                  decoration: InputDecoration(labelText: 'astatus'.tr),
                 ),
               ],
             ),
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Cancel'),
+              child: Text('cancel'.tr),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text('Recycle'),
+              child: Text('recycle'.tr),
               onPressed: () async {
                 try {
                   await FirebaseFirestore.instance.collection('recycle').add({
                     'name': titleController.text,
                     'quantity': int.parse(quantityController.text),
-                    'price': double.parse(priceController.text),
+                    //'price': double.parse(priceController.text),
                     'description': descriptionController.text,
                     'imageUrl': imageUrlController.text,
                     'assigned_center': assignedCenterController.text,
                     'assigned_status': assignedStatusController.text,
                   });
+
+                  // Delete the product from the "products" collection
                   await FirebaseFirestore.instance
                       .collection('products')
                       .doc(document.id)
@@ -212,7 +215,8 @@ class MyProductsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey[900],
-        title: Text('My Products'),
+        title: Text('mproduct'.tr),
+        backgroundColor: Colors.grey[900],
       ),
       backgroundColor: Color.fromARGB(255, 218, 245, 209),
       body: StreamBuilder(

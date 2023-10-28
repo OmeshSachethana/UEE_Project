@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
 import 'package:new_app/pages/view_auction_product_page.dart';
 
 class AuctionProductsPage extends StatefulWidget {
@@ -35,7 +36,7 @@ class _AuctionProductsPageState extends State<AuctionProductsPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey[900],
-        title: Text('Auction Products'),
+        title: Text('auctionp'.tr),
       ),
       backgroundColor: Color.fromARGB(255, 218, 245, 209),
       body: SingleChildScrollView(
@@ -44,7 +45,7 @@ class _AuctionProductsPageState extends State<AuctionProductsPage> {
             // Ongoing Auctions
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text('Ongoing Auctions',
+              child: Text('auctionon'.tr,
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             ),
             StreamBuilder(
@@ -113,7 +114,7 @@ class _AuctionProductsPageState extends State<AuctionProductsPage> {
             // My Auctions
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text('My Auctions',
+              child: Text('myauction'.tr,
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             ),
             StreamBuilder(
@@ -183,7 +184,7 @@ class _AuctionProductsPageState extends State<AuctionProductsPage> {
                                       _hasStartedTimer[document.id] == true
                                           ? null
                                           : () => _startTimer(document),
-                                  child: Text('Start Timer'),
+                                  child: Text('stimer'.tr),
                                 ),
                               ],
                             ),

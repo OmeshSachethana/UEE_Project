@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:quickalert/quickalert.dart';
@@ -22,10 +23,10 @@ class _AddProductPageState extends State<AddProductPage> {
   final User user = FirebaseAuth.instance.currentUser!;
   final List<String> categories = [
     'Watches',
-    'Blouse',
-    'Shorts',
-    'Trousers',
-    'Tshirts'
+    'Shirt',
+    'Shoes',
+    'Ties',
+    'Trousers'
   ];
   String selectedCategory = 'Watches';
 
@@ -125,7 +126,7 @@ class _AddProductPageState extends State<AddProductPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey[900],
-        title: const Text('Add Product'),
+        title: Text('addproduct'.tr),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -134,19 +135,19 @@ class _AddProductPageState extends State<AddProductPage> {
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  const Text('Product Type:'),
+                  Text('producttype'.tr),
                   Radio<bool>(
                     value: false,
                     groupValue: isAuctionProduct,
                     onChanged: _handleProductTypeChange,
                   ),
-                  const Text('Normal'),
+                  Text('normal'.tr),
                   Radio<bool>(
                     value: true,
                     groupValue: isAuctionProduct,
                     onChanged: _handleProductTypeChange,
                   ),
-                  const Text('Auction'),
+                  Text('auction'.tr),
                 ],
               ),
               DropdownButtonFormField(
@@ -162,22 +163,22 @@ class _AddProductPageState extends State<AddProductPage> {
                     selectedCategory = category.toString();
                   });
                 },
-                decoration: const InputDecoration(
-                  labelText: 'Category',
+                decoration: InputDecoration(
+                  labelText: 'scategory'.tr,
                 ),
               ),
               TextField(
                 controller: titleController,
-                decoration: const InputDecoration(labelText: 'Name'),
+                decoration: InputDecoration(labelText: 'name'.tr),
               ),
               TextField(
                 controller: quantityController,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: 'Quantity'),
+                decoration: InputDecoration(labelText: 'quantity'.tr),
               ),
               TextField(
                 controller: descriptionController,
-                decoration: const InputDecoration(labelText: 'Description'),
+                decoration: InputDecoration(labelText: 'description'.tr),
               ),
               if (isAuctionProduct)
                 Column(
@@ -186,7 +187,7 @@ class _AddProductPageState extends State<AddProductPage> {
                       controller: startingPriceController,
                       keyboardType: TextInputType.number,
                       decoration:
-                          const InputDecoration(labelText: 'Starting Price'),
+                          InputDecoration(labelText: 'startingprice'.tr),
                     ),
                     Row(
                       children: [
@@ -194,8 +195,7 @@ class _AddProductPageState extends State<AddProductPage> {
                           child: TextField(
                             controller: timerMinutesController,
                             keyboardType: TextInputType.number,
-                            decoration: const InputDecoration(
-                                labelText: 'Timer (minutes)'),
+                            decoration: InputDecoration(labelText: 'timerm'.tr),
                           ),
                         ),
                         const SizedBox(width: 16),
@@ -203,8 +203,7 @@ class _AddProductPageState extends State<AddProductPage> {
                           child: TextField(
                             controller: timerSecondsController,
                             keyboardType: TextInputType.number,
-                            decoration: const InputDecoration(
-                                labelText: 'Timer (seconds)'),
+                            decoration: InputDecoration(labelText: 'timers'.tr),
                           ),
                         ),
                       ],
@@ -214,13 +213,13 @@ class _AddProductPageState extends State<AddProductPage> {
               const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: _uploadImage,
-                child: const Text('Upload Image'),
+                child: Text('upload'.tr),
               ),
               if (_imageUrl != null) Image.network(_imageUrl!),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: (_imageUrl != null) ? _addProduct : null,
-                child: const Text('Add Product'),
+                child: Text('addproduct'.tr),
               ),
             ],
           ),

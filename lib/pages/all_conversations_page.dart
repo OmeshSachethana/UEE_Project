@@ -63,6 +63,21 @@ class _ConversationsPageState extends State<ConversationsPage> {
     await batch.commit();
   }
 
+  Future<String> fetchProfileImageURL(String conversation) async {
+    // Check if the conversation is with the current user
+    if (conversation != currentUserEmail) {
+      // If not, fetch the profile image of the other user in the conversation
+      final userDoc = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(conversation)
+          .get();
+      return userDoc['profileImageURL'];
+    } else {
+      // If the conversation is with the current user, return a default image URL or handle this case as needed
+      return 'https://www.nicepng.com/png/detail/136-1366211_group-of-10-guys-login-user-icon-png.png';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -145,68 +160,81 @@ class _ConversationsPageState extends State<ConversationsPage> {
                           .where('sender', isEqualTo: conversation)
                           .where('isRead', isEqualTo: false)
                           .snapshots(),
-                      builder: (context, snapshot) {
-                        final unreadMessages = snapshot.data?.docs.length ?? 0;
+                      builder: (context, streamSnapshot) {
+                        final unreadMessages =
+                            streamSnapshot.data?.docs.length ?? 0;
 
-                        return ListTile(
-                          leading: const CircleAvatar(
-                            backgroundImage: NetworkImage(
-                                'https://image.pngaaa.com/227/2662227-middle.png'), // replace with the actual URL or path to the profile icon
-                            radius: 40,
-                          ),
-                          title: Text(conversation, style: const TextStyle(fontSize: 20.0)),
-                          trailing: unreadMessages > 0
-                              ? CircleAvatar(
-                                  radius: 10.0,
-                                  backgroundColor: Colors.red,
-                                  child: Text(
-                                    '$unreadMessages',
-                                    style: const TextStyle(
-                                        color: Colors.white, fontSize: 12.0),
-                                  ),
-                                )
-                              : null,
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    MessageWidget(recipientEmail: conversation),
+                        return FutureBuilder<String>(
+                          future: fetchProfileImageURL(conversation),
+                          builder: (context, futureSnapshot) {
+                            if (futureSnapshot.connectionState ==
+                                ConnectionState.waiting) {}
+
+                            return ListTile(
+                              leading: CircleAvatar(
+                                backgroundImage: NetworkImage(futureSnapshot
+                                        .data ??
+                                    'https://www.nicepng.com/png/detail/136-1366211_group-of-10-guys-login-user-icon-png.png'), // replace with the actual URL or path to the profile icon
+                                radius: 40,
                               ),
-                            );
-                            // Mark all messages in this conversation as read when the user opens the conversation
-                            snapshot.data?.docs.forEach((doc) {
-                              doc.reference.update({'isRead': true});
-                            });
-                          },
-                          onLongPress: () async {
-                            final confirmDelete = await showDialog<bool>(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: const Text('Confirm Delete'),
-                                  content: const Text(
-                                      'Are you sure you want to delete this conversation?'),
-                                  actions: <Widget>[
-                                    TextButton(
-                                      child: const Text('Cancel'),
-                                      onPressed: () =>
-                                          Navigator.of(context).pop(false),
-                                    ),
-                                    TextButton(
-                                      child: const Text('Delete',
-                                          style: TextStyle(color: Colors.red)),
-                                      onPressed: () =>
-                                          Navigator.of(context).pop(true),
-                                    ),
-                                  ],
+                              title: Text(conversation,
+                                  style: const TextStyle(fontSize: 20.0)),
+                              trailing: unreadMessages > 0
+                                  ? CircleAvatar(
+                                      radius: 10.0,
+                                      backgroundColor: Colors.red,
+                                      child: Text(
+                                        '$unreadMessages',
+                                        style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12.0),
+                                      ),
+                                    )
+                                  : null,
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => MessageWidget(
+                                        recipientEmail: conversation),
+                                  ),
                                 );
+                                // Mark all messages in this conversation as read when the user opens the conversation
+                                streamSnapshot.data?.docs.forEach((doc) {
+                                  doc.reference.update({'isRead': true});
+                                });
+                              },
+                              onLongPress: () async {
+                                final confirmDelete = await showDialog<bool>(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text('Confirm Delete'),
+                                      content: const Text(
+                                          'Are you sure you want to delete this conversation?'),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          child: const Text('Cancel'),
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(false),
+                                        ),
+                                        TextButton(
+                                          child: const Text('Delete',
+                                              style:
+                                                  TextStyle(color: Colors.red)),
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(true),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+
+                                if (confirmDelete == true) {
+                                  await deleteConversation(conversation);
+                                }
                               },
                             );
-
-                            if (confirmDelete == true) {
-                              await deleteConversation(conversation);
-                            }
                           },
                         );
                       },

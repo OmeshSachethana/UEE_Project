@@ -37,17 +37,15 @@ class _LoginPageState extends State<LoginPage> {
         password: passwordController.text,
       );
 
-      //pop the loading circle
-      // ignore: use_build_context_synchronously
-      Navigator.pop(context);
+      // Check if the widget is still mounted before popping the dialog
+      if (mounted) {
+        Navigator.pop(context);
+      }
     } on FirebaseAuthException catch (e) {
-      //pop the loading circle
-      Navigator.pop(context);
-      // if (e.code == 'user-not-found') {
-      //   wrongEmailMessage(); //function calling
-      // } else if (e.code == 'wrong-password') {
-      //   wrongPasswordMessage();
-      // }
+      // Check if the widget is still mounted before popping the dialog
+      if (mounted) {
+        Navigator.pop(context);
+      }
 
       showErrorMessage(e.code);
     }

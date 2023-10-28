@@ -74,7 +74,7 @@ class MyDrawer extends StatelessWidget {
             onTap: onProductTap,
           ),
           MyListTile(
-            icon: Icons.recycling,
+            icon: Icons.wallet,
             text: "D-Auction".tr,
             onTap: onAuctionTap,
           ),
@@ -113,14 +113,13 @@ class MyDrawer extends StatelessWidget {
             text: "D-RecycleP".tr,
             onTap: onRecyclProductTap,
           ),
-          MyListTile(
-            icon: Icons.logout,
-            text: "D-logout".tr,
-            onTap: onSignoutTap,
-          ),
+          // MyListTile(
+          //   icon: Icons.logout,
+          //   text: "D-logout".tr,
+          //   onTap: onSignoutTap,
+          // ),
         ]),
       ),
     );
   }
 }
-//end

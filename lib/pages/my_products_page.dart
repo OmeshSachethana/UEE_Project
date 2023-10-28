@@ -126,7 +126,6 @@ class MyProductsPage extends StatelessWidget {
     TextEditingController imageUrlController =
         TextEditingController(text: data['image']);
 
-    // Add these two TextEditingController objects
     TextEditingController assignedCenterController =
         TextEditingController(text: null);
     TextEditingController assignedStatusController =
@@ -162,7 +161,6 @@ class MyProductsPage extends StatelessWidget {
                   controller: imageUrlController,
                   decoration: InputDecoration(labelText: 'url'.tr),
                 ),
-                // Add fields for assigned_center and assigned_status
                 TextField(
                   controller: assignedCenterController,
                   decoration: InputDecoration(labelText: 'acenter'.tr),
@@ -191,7 +189,6 @@ class MyProductsPage extends StatelessWidget {
                     //'price': double.parse(priceController.text),
                     'description': descriptionController.text,
                     'imageUrl': imageUrlController.text,
-                    // Add the new fields and set their default values
                     'assigned_center': assignedCenterController.text,
                     'assigned_status': assignedStatusController.text,
                   });
@@ -213,25 +210,12 @@ class MyProductsPage extends StatelessWidget {
     );
   }
 
-  //-----------------------------------------------------------------------
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('mproduct'.tr),
         backgroundColor: Colors.grey[900],
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => AddProductPage()),
-              );
-            },
-          ),
-        ],
+        title: Text('mproduct'.tr),
       ),
       backgroundColor: Color.fromARGB(255, 218, 245, 209),
       body: StreamBuilder(
@@ -288,30 +272,36 @@ class MyProductsPage extends StatelessWidget {
                       Map<String, dynamic> data =
                           document.data() as Map<String, dynamic>;
 
-                      return ListTile(
-                        title: Text(data['name']),
-                        leading:
-                            Image.network(data['image']), // Display image here
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: Icon(Icons.edit),
-                              onPressed: () =>
-                                  _showEditDialog(context, document),
+                      return Container(
+                        height: 70,
+                        child: Card(
+                          child: ListTile(
+                            title: Text(data['name']),
+                            subtitle: Text(
+                                'Quantity: ${data['quantity']}, Price: ${data['price']}'),
+                            leading: Image.network(data['image']),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: Icon(Icons.edit),
+                                  onPressed: () =>
+                                      _showEditDialog(context, document),
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.delete),
+                                  onPressed: () =>
+                                      _showDeleteDialog(context, document),
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.recycling),
+                                  onPressed: () =>
+                                      _showRecycleDialog(context, document),
+                                ),
+                              ],
                             ),
-                            IconButton(
-                              icon: Icon(Icons.delete),
-                              onPressed: () =>
-                                  _showDeleteDialog(context, document),
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.recycling),
-                              onPressed: () =>
-                                  _showRecycleDialog(context, document),
-                            ),
-                          ],
-                        ), // Add other product details as needed
+                          ),
+                        ),
                       );
                     },
                   ),
@@ -320,6 +310,15 @@ class MyProductsPage extends StatelessWidget {
             },
           );
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AddProductPage()),
+          );
+        },
+        child: Icon(Icons.add),
       ),
     );
   }

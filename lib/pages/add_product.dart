@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:quickalert/quickalert.dart';
 import 'dart:io';
 
 class AddProductPage extends StatefulWidget {
@@ -86,6 +87,13 @@ class _AddProductPageState extends State<AddProductPage> {
       setState(() {
         _imageUrl = null;
       });
+
+      // Show success alert here
+      QuickAlert.show(
+        context: context,
+        type: QuickAlertType.success,
+        text: 'Product Added Successfully!',
+      );
     } catch (e) {
       print('Failed to add product: $e');
     }
@@ -117,7 +125,8 @@ class _AddProductPageState extends State<AddProductPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:  Text('addproduct'.tr),
+        backgroundColor: Colors.grey[900],
+        title: Text('addproduct'.tr),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -126,19 +135,19 @@ class _AddProductPageState extends State<AddProductPage> {
             children: <Widget>[
               Row(
                 children: <Widget>[
-                   Text('producttype'.tr),
+                  Text('producttype'.tr),
                   Radio<bool>(
                     value: false,
                     groupValue: isAuctionProduct,
                     onChanged: _handleProductTypeChange,
                   ),
-                   Text('normal'.tr),
+                  Text('normal'.tr),
                   Radio<bool>(
                     value: true,
                     groupValue: isAuctionProduct,
                     onChanged: _handleProductTypeChange,
                   ),
-                   Text('auction'.tr),
+                  Text('auction'.tr),
                 ],
               ),
               DropdownButtonFormField(
@@ -154,13 +163,13 @@ class _AddProductPageState extends State<AddProductPage> {
                     selectedCategory = category.toString();
                   });
                 },
-                decoration:  InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'scategory'.tr,
                 ),
               ),
               TextField(
                 controller: titleController,
-                decoration:  InputDecoration(labelText: 'name'.tr),
+                decoration: InputDecoration(labelText: 'name'.tr),
               ),
               TextField(
                 controller: quantityController,
@@ -178,7 +187,7 @@ class _AddProductPageState extends State<AddProductPage> {
                       controller: startingPriceController,
                       keyboardType: TextInputType.number,
                       decoration:
-                           InputDecoration(labelText: 'startingprice'.tr),
+                          InputDecoration(labelText: 'startingprice'.tr),
                     ),
                     Row(
                       children: [
@@ -186,8 +195,7 @@ class _AddProductPageState extends State<AddProductPage> {
                           child: TextField(
                             controller: timerMinutesController,
                             keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                                labelText: 'timerm'.tr),
+                            decoration: InputDecoration(labelText: 'timerm'.tr),
                           ),
                         ),
                         const SizedBox(width: 16),
@@ -195,8 +203,7 @@ class _AddProductPageState extends State<AddProductPage> {
                           child: TextField(
                             controller: timerSecondsController,
                             keyboardType: TextInputType.number,
-                            decoration:  InputDecoration(
-                                labelText: 'timers'.tr),
+                            decoration: InputDecoration(labelText: 'timers'.tr),
                           ),
                         ),
                       ],
@@ -206,13 +213,13 @@ class _AddProductPageState extends State<AddProductPage> {
               const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: _uploadImage,
-                child:  Text('upload'.tr),
+                child: Text('upload'.tr),
               ),
               if (_imageUrl != null) Image.network(_imageUrl!),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: (_imageUrl != null) ? _addProduct : null,
-                child:  Text('addproduct'.tr),
+                child: Text('addproduct'.tr),
               ),
             ],
           ),

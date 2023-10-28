@@ -15,18 +15,17 @@ class MyDrawer extends StatelessWidget {
   final void Function()? onAuctionTap;
   final void Function()? onRecyclProductTap;
 
-  const MyDrawer({
-    super.key,
-    required this.onProfileTap,
-    required this.onSignoutTap,
-    required this.onMessageTap,
-    required this.onProductTap,
-    required this.onExchangeTap,
-    required this.onLanguageTap,
-    required this.onRecycleCenterTap,
-    required this.onRecyclProductTap,
-    required this.onAuctionTap
-  });
+  const MyDrawer(
+      {super.key,
+      required this.onProfileTap,
+      required this.onSignoutTap,
+      required this.onMessageTap,
+      required this.onProductTap,
+      required this.onExchangeTap,
+      required this.onLanguageTap,
+      required this.onRecycleCenterTap,
+      required this.onRecyclProductTap,
+      required this.onAuctionTap});
 
   Future<int> countUnreadConversations() async {
     final user = FirebaseAuth.instance.currentUser;
@@ -68,8 +67,7 @@ class MyDrawer extends StatelessWidget {
             onTap: () => Navigator.pop(context),
           ),
           MyListTile(
-            icon: Icons.person, text: "D-Profile".tr, onTap: onProfileTap),
-
+              icon: Icons.person, text: "D-Profile".tr, onTap: onProfileTap),
           MyListTile(
             icon: Icons.article,
             text: "D-MyProduct".tr,
@@ -88,7 +86,7 @@ class MyDrawer extends StatelessWidget {
           MyListTile(
             icon: Icons.language_rounded,
             text: "D-Language".tr,
-            onTap:  onLanguageTap,
+            onTap: onLanguageTap,
           ),
           FutureBuilder<int>(
             future: countUnreadConversations(),
@@ -116,10 +114,13 @@ class MyDrawer extends StatelessWidget {
             onTap: onRecyclProductTap,
           ),
           MyListTile(
-            icon: Icons.logout, text: "D-logout".tr, onTap: onSignoutTap,
+            icon: Icons.logout,
+            text: "D-logout".tr,
+            onTap: onSignoutTap,
           ),
         ]),
       ),
     );
   }
 }
+//end

@@ -216,7 +216,6 @@ class MyProductsPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.grey[900],
         title: Text('mproduct'.tr),
-        backgroundColor: Colors.grey[900],
       ),
       backgroundColor: Color.fromARGB(255, 218, 245, 209),
       body: StreamBuilder(

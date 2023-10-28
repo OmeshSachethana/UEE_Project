@@ -22,6 +22,14 @@ class _RegisterPageState extends State<RegisterPage> {
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
 
+  // Add this function to check password requirements
+  bool isPasswordValid(String password) {
+    // Define a regular expression for password validation
+    RegExp passwordRegExp =
+        RegExp(r'^(?=.*?[A-Za-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
+    return passwordRegExp.hasMatch(password);
+  }
+
   //sign user in method
   void signUserUp() async {
     showDialog(
@@ -34,8 +42,19 @@ class _RegisterPageState extends State<RegisterPage> {
     );
 
     if (passwordController.text != confirmPasswordController.text) {
-      Navigator.pop(context);
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
       showErrorMessage("Passwords don't match!");
+      return;
+    }
+
+    if (!isPasswordValid(passwordController.text)) {
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
+      showErrorMessage(
+          "Password must have at least one special character and one number.");
       return;
     }
 
@@ -52,13 +71,19 @@ class _RegisterPageState extends State<RegisterPage> {
           .set({
         'username': emailController.text.split('@')[0],
         'contactNumber': '0771234567',
+        'age': '0',
         'address': 'address',
         'city': 'city',
+        'profileImageURL': '',
       });
 
-      if (context.mounted) Navigator.pop(context);
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
     } on FirebaseAuthException catch (e) {
-      Navigator.pop(context);
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
       showErrorMessage(e.code);
     }
   }

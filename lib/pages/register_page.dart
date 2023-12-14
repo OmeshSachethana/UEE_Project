@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:new_app/components/my_button.dart';
 import 'package:new_app/components/my_textfield.dart';
@@ -23,6 +22,14 @@ class _RegisterPageState extends State<RegisterPage> {
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
 
+  // Add this function to check password requirements
+  bool isPasswordValid(String password) {
+    // Define a regular expression for password validation
+    RegExp passwordRegExp =
+        RegExp(r'^(?=.*?[A-Za-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
+    return passwordRegExp.hasMatch(password);
+  }
+
   //sign user in method
   void signUserUp() async {
     showDialog(
@@ -35,8 +42,19 @@ class _RegisterPageState extends State<RegisterPage> {
     );
 
     if (passwordController.text != confirmPasswordController.text) {
-      Navigator.pop(context);
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
       showErrorMessage("Passwords don't match!");
+      return;
+    }
+
+    if (!isPasswordValid(passwordController.text)) {
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
+      showErrorMessage(
+          "Password must have at least one special character and one number.");
       return;
     }
 
@@ -53,13 +71,19 @@ class _RegisterPageState extends State<RegisterPage> {
           .set({
         'username': emailController.text.split('@')[0],
         'contactNumber': '0771234567',
+        'age': '0',
         'address': 'address',
         'city': 'city',
+        'profileImageURL': '',
       });
 
-      if (context.mounted) Navigator.pop(context);
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
     } on FirebaseAuthException catch (e) {
-      Navigator.pop(context);
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
       showErrorMessage(e.code);
     }
   }
@@ -114,7 +138,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 //welcome back
                 const Text(
-                  'Create an acoount!',
+                  'Create an account!',
                   style: TextStyle(
                     color: Colors.grey,
                     fontSize: 16,
@@ -192,7 +216,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         onTap: () => AuthService().signInWithGoogle(),
                         imagePath: 'lib/images/google.png'),
 
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
 
                     //apple button
                     SquareTile(onTap: () {}, imagePath: 'lib/images/apple.png'),
